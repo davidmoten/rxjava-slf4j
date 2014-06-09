@@ -501,6 +501,12 @@ public class Logging {
 				return this;
 			}
 
+			public Builder<T> to(
+					Func1<Observable<Message<T>>, Observable<Message<T>>> f) {
+				this.observable = f.call(observable);
+				return this;
+			}
+
 			public OperatorLogging<T> log() {
 				return new OperatorLogging<T>(new Parameters<T>(logger,
 						loggerName, onCompleteMessage, subscribedMessage,
