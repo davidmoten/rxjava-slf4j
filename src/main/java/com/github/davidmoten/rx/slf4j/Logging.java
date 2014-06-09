@@ -246,13 +246,21 @@ public class Logging {
 				@Override
 				public void call(Message<T> m) {
 					if (m.value().isOnCompleted() && onCompleteMessage != null) {
-						Logging.log(getLogger(), onCompleteMessage,
+						StringBuilder s = new StringBuilder();
+						s.append(onCompleteMessage);
+						if (s.length() > 0)
+							s.append(",");
+						s.append(m.message());
+						Logging.log(getLogger(), s.toString(),
 								onCompletedLevel, null);
 					} else if (m.value().isOnError() && logOnError) {
 						StringBuilder s = new StringBuilder();
 						s.append(onErrorPrefix);
 						s.append(m.value().getThrowable().getMessage());
 						s.append(onErrorSuffix);
+						if (s.length() > 0)
+							s.append(",");
+						s.append(m.message());
 						Logging.log(getLogger(), s.toString(), onErrorLevel, m
 								.value().getThrowable());
 					} else if (m.value().isOnNext() && logOnNext) {
@@ -262,6 +270,9 @@ public class Logging {
 							s.append(String.valueOf(valueFunction.call(m
 									.value().getValue())));
 						s.append(onNextSuffix);
+						if (s.length() > 0)
+							s.append(",");
+						s.append(m.message());
 						Logging.log(getLogger(), s.toString(), onNextLevel,
 								null);
 					}
