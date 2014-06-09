@@ -24,33 +24,6 @@ public class Logging {
 		K_AND_M, COMMAS, PLAIN;
 	}
 
-	public static enum ItemType {
-		WHEN, START, FINISH, COUNT, EVERY;
-	}
-
-	public static class Item {
-		private final ItemType type;
-		private final Object value;
-
-		public Item(ItemType type, Object value) {
-			super();
-			this.type = type;
-			this.value = value;
-		}
-
-		public ItemType getType() {
-			return type;
-		}
-
-		public Object getValue() {
-			return value;
-		}
-
-		public <T> T getValue(Class<T> cls) {
-			return (T) value;
-		}
-	}
-
 	public static class Parameters<T> {
 
 		private final Logger logger;
