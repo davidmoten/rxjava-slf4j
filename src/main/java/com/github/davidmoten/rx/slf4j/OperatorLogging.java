@@ -7,16 +7,15 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.observers.Subscribers;
+import rx.subjects.PublishSubject;
 import rx.subscriptions.Subscriptions;
 
 import com.github.davidmoten.rx.slf4j.Logging.Parameters;
+import com.github.davidmoten.rx.slf4j.Logging.Parameters.Message;
 
 public class OperatorLogging<T> implements Operator<T, T> {
 
 	private final Parameters<T> p;
-
-	private final SingleSubscriptionSubject<T> subject = SingleSubscriptionSubject
-			.create();
 
 	public OperatorLogging(Parameters<T> parameters) {
 		this.p = parameters;
@@ -35,9 +34,24 @@ public class OperatorLogging<T> implements Operator<T, T> {
 
 		});
 		child.add(listener);
-		Subscriber<T> parent = Subscribers.from(createObserver(p, subject));
-		Subscription sub = p.getObservable().subscribe();
+		Subscriber<T> parent = Subscribers.from(createObserver(p.getSubject()));
 		child.add(parent);
+
+		Observer<Message<T>> observer = new Observer<Message<T>>() {
+
+			@Override
+			public void onCompleted() {
+			}
+
+			@Override
+			public void onError(Throwable e) {
+			}
+
+			@Override
+			public void onNext(Message<T> t) {
+			}
+		};
+		Subscription sub = p.getObservable().subscribe(observer);
 		child.add(sub);
 
 		if (p.getSubscribedMessage() != null)
@@ -46,8 +60,7 @@ public class OperatorLogging<T> implements Operator<T, T> {
 		return parent;
 	}
 
-	static <T> Observer<T> createObserver(final Parameters<T> p,
-			final SingleSubscriptionSubject<T> subject) {
+	static <T> Observer<T> createObserver(final PublishSubject<T> subject) {
 		return new Observer<T>() {
 
 			@Override
