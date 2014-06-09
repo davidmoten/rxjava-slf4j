@@ -1,5 +1,6 @@
 package com.github.davidmoten.rx.slf4j;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
@@ -498,6 +499,11 @@ public class Logging {
 								return finish >= count.get();
 							}
 						});
+				return this;
+			}
+
+			public Builder<T> sample(long period, TimeUnit timeUnit) {
+				this.observable = observable.sample(period, timeUnit);
 				return this;
 			}
 
