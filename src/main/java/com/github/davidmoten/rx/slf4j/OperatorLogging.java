@@ -35,7 +35,8 @@ public class OperatorLogging<T> implements Operator<T, T> {
 
 		});
 		child.add(listener);
-		Subscriber<T> parent = Subscribers.from(createObserver(p.getSubject()));
+		Subscriber<T> parent = Subscribers.from(createObserver(p.getSubject(),
+				child));
 		child.add(parent);
 
 		Observer<Message<T>> observer = new Observer<Message<T>>() {
@@ -64,22 +65,26 @@ public class OperatorLogging<T> implements Operator<T, T> {
 		return parent;
 	}
 
-	static <T> Observer<T> createObserver(final PublishSubject<T> subject) {
+	static <T> Observer<T> createObserver(final PublishSubject<T> subject,
+			final Subscriber<? super T> child) {
 		return new Observer<T>() {
 
 			@Override
 			public void onCompleted() {
 				subject.onCompleted();
+				child.onCompleted();
 			}
 
 			@Override
 			public void onError(Throwable e) {
 				subject.onError(e);
+				child.onError(e);
 			}
 
 			@Override
 			public void onNext(T t) {
 				subject.onNext(t);
+				child.onNext(t);
 			}
 		};
 	}
