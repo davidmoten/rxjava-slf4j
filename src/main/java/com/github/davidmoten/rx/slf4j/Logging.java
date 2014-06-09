@@ -231,19 +231,20 @@ public class Logging {
 							return new Message<T>(n, "");
 						}
 					});
+
 			private final Action1<Message<T>> log = new Action1<Message<T>>() {
 
 				@Override
 				public void call(Message<T> m) {
 					if (m.value().isOnCompleted() && onCompleteMessage != null) {
-						Logging.log(logger, onCompleteMessage,
+						Logging.log(getLogger(), onCompleteMessage,
 								onCompletedLevel, null);
 					} else if (m.value().isOnError() && logOnError) {
 						StringBuilder s = new StringBuilder();
 						s.append(onErrorPrefix);
 						s.append(m.value().getThrowable().getMessage());
 						s.append(onErrorSuffix);
-						Logging.log(logger, s.toString(), onErrorLevel, m
+						Logging.log(getLogger(), s.toString(), onErrorLevel, m
 								.value().getThrowable());
 					} else if (m.value().isOnNext() && logOnNext) {
 						StringBuilder s = new StringBuilder();
@@ -251,11 +252,22 @@ public class Logging {
 						if (logObject)
 							s.append(String.valueOf(m.value().getValue()));
 						s.append(onNextSuffix);
-						Logging.log(logger, s.toString(), onNextLevel, null);
+						Logging.log(getLogger(), s.toString(), onNextLevel,
+								null);
 					}
 
 				}
 			};
+
+			public Logger getLogger() {
+				if (logger != null)
+					return logger;
+				else if (loggerName != null)
+					return LoggerFactory.getLogger(loggerName);
+				else {
+					return DEFAULT_LOGGER;
+				}
+			}
 
 			private Builder() {
 			}

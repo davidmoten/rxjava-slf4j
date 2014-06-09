@@ -16,6 +16,7 @@ import com.github.davidmoten.rx.slf4j.Logging.Parameters.Message;
 public class OperatorLogging<T> implements Operator<T, T> {
 
 	private final Parameters<T> p;
+	private Subscription sub;
 
 	public OperatorLogging(Parameters<T> parameters) {
 		this.p = parameters;
@@ -41,17 +42,20 @@ public class OperatorLogging<T> implements Operator<T, T> {
 
 			@Override
 			public void onCompleted() {
+				sub.unsubscribe();
 			}
 
 			@Override
 			public void onError(Throwable e) {
+				e.printStackTrace();
+				sub.unsubscribe();
 			}
 
 			@Override
 			public void onNext(Message<T> t) {
 			}
 		};
-		Subscription sub = p.getObservable().subscribe(observer);
+		sub = p.getObservable().subscribe(observer);
 		child.add(sub);
 
 		if (p.getSubscribedMessage() != null)
