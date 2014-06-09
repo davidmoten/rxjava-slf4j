@@ -224,10 +224,10 @@ public class Logging {
 			private Level onNextLevel = Level.INFO;
 			private Level onErrorLevel = Level.ERROR;
 			private Level onCompletedLevel = Level.INFO;
-			private Level subscribedLevel = Level.INFO;
-			private Level unsubscribedLevel = Level.INFO;
+			private Level subscribedLevel = Level.DEBUG;
+			private Level unsubscribedLevel = Level.DEBUG;
 			private CountFormat countFormat;
-			private boolean logObject = true;
+			private boolean logObject = false;
 			private Func1<T, ?> valueFunction = Functions.<T> identity();
 			private boolean logStackTrace = false;
 			private final PublishSubject<T> subject = PublishSubject
