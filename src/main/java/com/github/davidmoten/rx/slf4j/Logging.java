@@ -262,7 +262,24 @@ public class Logging {
 
 				@Override
 				public void call(Message<T> m) {
-					StringBuilder s = new StringBuilder();
+					if (m.value().isOnCompleted() && onCompleteMessage != null) {
+						Logging.log(logger, onCompleteMessage,
+								onCompletedLevel, null);
+					} else if (m.value().isOnError() && logOnError) {
+						StringBuilder s = new StringBuilder();
+						s.append(onErrorPrefix);
+						s.append(m.value().getThrowable().getMessage());
+						s.append(onErrorSuffix);
+						Logging.log(logger, s.toString(), onErrorLevel, m
+								.value().getThrowable());
+					} else if (m.value().isOnNext() && logOnNext) {
+						StringBuilder s = new StringBuilder();
+						s.append(onNextPrefix);
+						if (logObject)
+							s.append(String.valueOf(m.value().getValue()));
+						s.append(onNextSuffix);
+						Logging.log(logger, s.toString(), onNextLevel, null);
+					}
 
 				}
 			};
@@ -490,6 +507,10 @@ public class Logging {
 						onCompletedLevel, subscribedLevel, unsubscribedLevel,
 						countFormat, logObject, logStackTrace, subject,
 						observable.doOnNext(log)));
+			}
+
+			public Builder<T> value() {
+				return value(true);
 			}
 		}
 

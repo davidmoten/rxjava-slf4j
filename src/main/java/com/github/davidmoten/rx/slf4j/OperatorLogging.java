@@ -36,7 +36,9 @@ public class OperatorLogging<T> implements Operator<T, T> {
 		});
 		child.add(listener);
 		Subscriber<T> parent = Subscribers.from(createObserver(p, subject));
+		Subscription sub = p.getObservable().subscribe();
 		child.add(parent);
+		child.add(sub);
 
 		if (p.getSubscribedMessage() != null)
 			log(p.getLogger(), p.getSubscribedMessage(),
@@ -50,18 +52,11 @@ public class OperatorLogging<T> implements Operator<T, T> {
 
 			@Override
 			public void onCompleted() {
-				if (p.getOnCompleteMessage() != null)
-					log(p.getLogger(), p.getOnCompleteMessage(),
-							p.getOnCompletedLevel(), null);
 				subject.onCompleted();
 			}
 
 			@Override
 			public void onError(Throwable e) {
-				if (p.getLogOnError()) {
-					log(p.getLogger(), p.getOnErrorPrefix() + e.getMessage()
-							+ p.getOnErrorSuffix(), p.getOnErrorLevel(), e);
-				}
 				subject.onError(e);
 			}
 

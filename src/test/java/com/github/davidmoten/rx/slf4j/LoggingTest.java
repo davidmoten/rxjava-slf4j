@@ -15,7 +15,7 @@ public class LoggingTest {
 	public void testName() {
 		int count = Observable.range(1, 10)
 		// log all
-				.lift(logger(LoggingTest.class).log())
+				.lift(logger(LoggingTest.class).value().log())
 				// count
 				.count().toBlockingObservable().single();
 		assertEquals(10, count);
