@@ -9,6 +9,7 @@ import rx.Notification;
 import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.functions.Functions;
 import rx.subjects.PublishSubject;
 
 public class Logging {
@@ -47,6 +48,7 @@ public class Logging {
 		private final boolean logStackTrace;
 		private final PublishSubject<T> subject;
 		private final Observable<Message<T>> observable;
+		private final Func1<T, ?> valueFunction;
 
 		Parameters(Logger logger, String loggerName, String onCompleteMessage,
 				String subscribedMessage, String unsubscribedMessage,
@@ -55,8 +57,8 @@ public class Logging {
 				Level onNextLevel, Level onErrorLevel, Level onCompletedLevel,
 				Level subscribedLevel, Level unsubscribedLevel,
 				CountFormat countFormat, boolean logObject,
-				boolean logStackTrace, PublishSubject<T> subject,
-				Observable<Message<T>> observable) {
+				Func1<T, ?> valueFunction, boolean logStackTrace,
+				PublishSubject<T> subject, Observable<Message<T>> observable) {
 			this.logger = logger;
 			this.loggerName = loggerName;
 			this.onCompleteMessage = onCompleteMessage;
@@ -75,6 +77,7 @@ public class Logging {
 			this.unsubscribedLevel = unsubscribedLevel;
 			this.countFormat = countFormat;
 			this.logObject = logObject;
+			this.valueFunction = valueFunction;
 			this.logStackTrace = logStackTrace;
 			this.subject = subject;
 			this.observable = observable;
@@ -162,6 +165,10 @@ public class Logging {
 			return logStackTrace;
 		}
 
+		public Func1<T, ?> getValueFunction() {
+			return valueFunction;
+		}
+
 		public Observable<Message<T>> getObservable() {
 			return observable;
 		}
@@ -220,6 +227,7 @@ public class Logging {
 			private Level unsubscribedLevel = Level.INFO;
 			private CountFormat countFormat;
 			private boolean logObject = true;
+			private Func1<T, ?> valueFunction = Functions.<T> identity();
 			private boolean logStackTrace = false;
 			private final PublishSubject<T> subject = PublishSubject
 					.<T> create();
@@ -250,7 +258,8 @@ public class Logging {
 						StringBuilder s = new StringBuilder();
 						s.append(onNextPrefix);
 						if (logObject)
-							s.append(String.valueOf(m.value().getValue()));
+							s.append(String.valueOf(valueFunction.call(m
+									.value().getValue())));
 						s.append(onNextSuffix);
 						Logging.log(getLogger(), s.toString(), onNextLevel,
 								null);
@@ -437,6 +446,15 @@ public class Logging {
 				return this;
 			}
 
+			public Builder<T> value() {
+				return value(true);
+			}
+
+			public Builder<T> value(Func1<T, ?> function) {
+				this.valueFunction = function;
+				return this;
+			}
+
 			public Builder<T> exclude() {
 				return value(false);
 			}
@@ -490,13 +508,10 @@ public class Logging {
 						onErrorPrefix, onErrorSuffix, onNextPrefix,
 						onNextSuffix, onNextLevel, onErrorLevel,
 						onCompletedLevel, subscribedLevel, unsubscribedLevel,
-						countFormat, logObject, logStackTrace, subject,
-						observable.doOnNext(log)));
+						countFormat, logObject, valueFunction, logStackTrace,
+						subject, observable.doOnNext(log)));
 			}
 
-			public Builder<T> value() {
-				return value(true);
-			}
 		}
 
 	}
