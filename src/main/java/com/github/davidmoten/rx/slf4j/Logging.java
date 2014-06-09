@@ -404,23 +404,18 @@ public class Logging {
 				return this;
 			}
 
-			public Builder<T> count(boolean count) {
-				if (count)
-					observable = observable
-							.map(new Func1<Message<T>, Message<T>>() {
-								AtomicLong count = new AtomicLong(0);
-
-								@Override
-								public Message<T> call(Message<T> m) {
-									return m.append("count="
-											+ +count.incrementAndGet());
-								}
-							});
-				return this;
-			}
-
 			public Builder<T> count() {
-				return count(true);
+				observable = observable
+						.map(new Func1<Message<T>, Message<T>>() {
+							AtomicLong count = new AtomicLong(0);
+
+							@Override
+							public Message<T> call(Message<T> m) {
+								return m.append("count="
+										+ +count.incrementAndGet());
+							}
+						});
+				return this;
 			}
 
 			public Builder<T> every(final int every) {
