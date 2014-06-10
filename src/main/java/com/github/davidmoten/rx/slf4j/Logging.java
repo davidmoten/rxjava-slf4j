@@ -23,10 +23,6 @@ public class Logging {
 		INFO, WARN, DEBUG, TRACE, ERROR;
 	}
 
-	public enum CountFormat {
-		K_AND_M, COMMAS, PLAIN;
-	}
-
 	public static class Parameters<T> {
 
 		private final Logger logger;
@@ -36,17 +32,13 @@ public class Logging {
 		private final String unsubscribedMessage;
 		private final boolean logOnNext;
 		private final boolean logOnError;
-		private final String onErrorPrefix;
-		private final String onErrorSuffix;
-		private final String onNextPrefix;
-		private final String onNextSuffix;
+		private final String onErrorFormat;
+		private final String onNextFormat;
 		private final Level onNextLevel;
 		private final Level onErrorLevel;
 		private final Level onCompletedLevel;
 		private final Level subscribedLevel;
 		private final Level unsubscribedLevel;
-		private final CountFormat countFormat;
-		private final boolean logObject;
 		private final boolean logStackTrace;
 		private final PublishSubject<T> subject;
 		private final Observable<Message<T>> observable;
@@ -54,13 +46,12 @@ public class Logging {
 
 		Parameters(Logger logger, String loggerName, String onCompleteMessage,
 				String subscribedMessage, String unsubscribedMessage,
-				boolean logOnNext, boolean logOnError, String onErrorPrefix,
-				String onErrorSuffix, String onNextPrefix, String onNextSuffix,
-				Level onNextLevel, Level onErrorLevel, Level onCompletedLevel,
-				Level subscribedLevel, Level unsubscribedLevel,
-				CountFormat countFormat, boolean logObject,
-				Func1<T, ?> valueFunction, boolean logStackTrace,
-				PublishSubject<T> subject, Observable<Message<T>> observable) {
+				boolean logOnNext, boolean logOnError, String onErrorFormat,
+				String onNextFormat, Level onNextLevel, Level onErrorLevel,
+				Level onCompletedLevel, Level subscribedLevel,
+				Level unsubscribedLevel, Func1<T, ?> valueFunction,
+				boolean logStackTrace, PublishSubject<T> subject,
+				Observable<Message<T>> observable) {
 			this.logger = logger;
 			this.loggerName = loggerName;
 			this.onCompleteMessage = onCompleteMessage;
@@ -68,17 +59,13 @@ public class Logging {
 			this.unsubscribedMessage = unsubscribedMessage;
 			this.logOnNext = logOnNext;
 			this.logOnError = logOnError;
-			this.onErrorPrefix = onErrorPrefix;
-			this.onErrorSuffix = onErrorSuffix;
-			this.onNextPrefix = onNextPrefix;
-			this.onNextSuffix = onNextSuffix;
+			this.onErrorFormat = onErrorFormat;
+			this.onNextFormat = onNextFormat;
 			this.onNextLevel = onNextLevel;
 			this.onErrorLevel = onErrorLevel;
 			this.onCompletedLevel = onCompletedLevel;
 			this.subscribedLevel = subscribedLevel;
 			this.unsubscribedLevel = unsubscribedLevel;
-			this.countFormat = countFormat;
-			this.logObject = logObject;
 			this.valueFunction = valueFunction;
 			this.logStackTrace = logStackTrace;
 			this.subject = subject;
@@ -119,20 +106,12 @@ public class Logging {
 			return logOnError;
 		}
 
-		public String getOnErrorPrefix() {
-			return onErrorPrefix;
+		public String getOnErrorFormat() {
+			return onErrorFormat;
 		}
 
-		public String getOnErrorSuffix() {
-			return onErrorSuffix;
-		}
-
-		public String getOnNextPrefix() {
-			return onNextPrefix;
-		}
-
-		public String getOnNextSuffix() {
-			return onNextSuffix;
+		public String getOnNextFormat() {
+			return onNextFormat;
 		}
 
 		public Level getOnNextLevel() {
@@ -153,14 +132,6 @@ public class Logging {
 
 		public Level getUnsubscribedLevel() {
 			return unsubscribedLevel;
-		}
-
-		public CountFormat getCountFormat() {
-			return countFormat;
-		}
-
-		public boolean getLogObject() {
-			return logObject;
 		}
 
 		public boolean getLogStackTrace() {
@@ -218,17 +189,13 @@ public class Logging {
 			private String unsubscribedMessage = "onUnsubscribe";
 			private final boolean logOnNext = true;
 			private final boolean logOnError = true;
-			private String onErrorPrefix = "";
-			private String onErrorSuffix = "";
-			private String onNextPrefix = "";
-			private String onNextSuffix = "";
+			private String onErrorFormat = "";
+			private String onNextFormat = "";
 			private Level onNextLevel = Level.INFO;
 			private Level onErrorLevel = Level.ERROR;
 			private Level onCompletedLevel = Level.INFO;
 			private Level subscribedLevel = Level.DEBUG;
 			private Level unsubscribedLevel = Level.DEBUG;
-			private CountFormat countFormat;
-			private boolean logObject = false;
 			private Func1<T, ?> valueFunction = Functions.<T> identity();
 			private boolean logStackTrace = false;
 			private boolean logMemory = false;
@@ -328,22 +295,22 @@ public class Logging {
 			}
 
 			public Builder<T> onErrorPrefix(String onErrorPrefix) {
-				this.onErrorPrefix = onErrorPrefix;
+				this.onErrorFormat = onErrorPrefix + "%s";
 				return this;
 			}
 
-			public Builder<T> onErrorSuffix(String onErrorSuffix) {
-				this.onErrorSuffix = onErrorSuffix;
+			public Builder<T> onErrorFormat(String onErrorFormat) {
+				this.onErrorFormat = onErrorFormat;
 				return this;
 			}
 
 			public Builder<T> onNextPrefix(String onNextPrefix) {
-				this.onNextPrefix = onNextPrefix;
+				this.onNextFormat = onNextPrefix + "%s";
 				return this;
 			}
 
 			public Builder<T> onNextSuffix(String onNextSuffix) {
-				this.onNextSuffix = onNextSuffix;
+				this.onNextFormat = onNextSuffix;
 				return this;
 			}
 
@@ -368,9 +335,8 @@ public class Logging {
 			}
 
 			public Builder<T> prefix(String prefix) {
-				onNextPrefix = prefix;
-				onErrorPrefix = prefix;
-				return this;
+				onNextPrefix(prefix);
+				return onErrorPrefix(prefix);
 			}
 
 			public Builder<T> unsubscribed(Level unsubscribedLevel) {
@@ -410,18 +376,16 @@ public class Logging {
 				return this;
 			}
 
-			public Builder<T> format(CountFormat countFormat) {
-				this.countFormat = countFormat;
-				return this;
-			}
-
 			public Builder<T> value(boolean logValue) {
-				this.logObject = logValue;
-				return this;
+				if (logValue)
+					return showValue();
+				else
+					return excludeValue();
 			}
 
 			public Builder<T> showValue() {
-				return value(true);
+				onNextFormat = "%s";
+				return this;
 			}
 
 			public Builder<T> value(Func1<T, ?> function) {
@@ -430,7 +394,8 @@ public class Logging {
 			}
 
 			public Builder<T> excludeValue() {
-				return value(false);
+				onNextFormat = "";
+				return this;
 			}
 
 			public Builder<T> showStackTrace() {
@@ -495,11 +460,10 @@ public class Logging {
 				return new OperatorLogging<T>(new Parameters<T>(logger,
 						loggerName, onCompleteMessage, subscribedMessage,
 						unsubscribedMessage, logOnNext, logOnError,
-						onErrorPrefix, onErrorSuffix, onNextPrefix,
-						onNextSuffix, onNextLevel, onErrorLevel,
+						onErrorFormat, onNextFormat, onNextLevel, onErrorLevel,
 						onCompletedLevel, subscribedLevel, unsubscribedLevel,
-						countFormat, logObject, valueFunction, logStackTrace,
-						subject, observable.doOnNext(log)));
+						valueFunction, logStackTrace, subject,
+						observable.doOnNext(log)));
 			}
 
 			private final Action1<Message<T>> log = new Action1<Message<T>>() {
@@ -509,47 +473,38 @@ public class Logging {
 					if (m.value().isOnCompleted() && onCompleteMessage != null) {
 						StringBuilder s = new StringBuilder();
 						s.append(onCompleteMessage);
-						if (s.length() > 0)
-							s.append(",");
+						delimiter(s);
 						s.append(m.message());
-
 						if (logMemory) {
-							if (s.length() > 0)
-								s.append(", ");
+							delimiter(s);
 							s.append(memoryUsage());
 						}
 						Logging.log(getLogger(), s.toString(),
 								onCompletedLevel, null);
 					} else if (m.value().isOnError() && logOnError) {
 						StringBuilder s = new StringBuilder();
-						s.append(onErrorPrefix);
-						s.append(m.value().getThrowable().getMessage());
-						s.append(onErrorSuffix);
-						if (s.length() > 0)
-							s.append(", ");
+						s.append(String.format(onErrorFormat, m.value()
+								.getThrowable().getMessage()));
+						delimiter(s);
 						s.append(m.message());
 						if (logMemory) {
-							if (s.length() > 0)
-								s.append(", ");
+							delimiter(s);
 							s.append(memoryUsage());
 						}
 						Logging.log(getLogger(), s.toString(), onErrorLevel, m
 								.value().getThrowable());
 					} else if (m.value().isOnNext() && logOnNext) {
 						StringBuilder s = new StringBuilder();
-						s.append(onNextPrefix);
-						if (logObject)
-							s.append(String.valueOf(valueFunction.call(m
-									.value().getValue())));
-						s.append(onNextSuffix);
+						if (onNextFormat.length() > 0)
+							s.append(String.format(onNextFormat, String
+									.valueOf(valueFunction.call(m.value()
+											.getValue()))));
 						if (m.message().length() > 0) {
-							if (s.length() > 0)
-								s.append(", ");
+							delimiter(s);
 							s.append(m.message());
 						}
 						if (logMemory) {
-							if (s.length() > 0)
-								s.append(", ");
+							delimiter(s);
 							s.append(memoryUsage());
 						}
 						if (logStackTrace) {
@@ -563,6 +518,11 @@ public class Logging {
 								null);
 					}
 
+				}
+
+				private void delimiter(StringBuilder s) {
+					if (s.length() > 0)
+						s.append(", ");
 				}
 
 			};
