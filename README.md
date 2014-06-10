@@ -57,13 +57,12 @@ Some methods on the ```logger()``` builder can be called repeatedly:
 Shows every 3000th value:
 ```java
 logger().every(1000).every(3).log()
-
+```
 
 Order
 ----------------
 Order of some methods called on the ```logger()``` builder is significant. For instance:
 
-```
 This 
 ```java
 Observable.range(11,3011)
