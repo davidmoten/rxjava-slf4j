@@ -17,7 +17,7 @@ public class LoggingTest {
 		// log all
 				.lift(logger(LoggingTest.class).value().log())
 				// count
-				.count().toBlockingObservable().single();
+				.count().toBlocking().single();
 		assertEquals(10, count);
 	}
 
@@ -30,18 +30,17 @@ public class LoggingTest {
 						.exclude().subscribed(Level.DEBUG)
 						.onCompleted(Level.DEBUG).count().every(2).log())
 				// count
-				.count().toBlockingObservable().single();
+				.count().toBlocking().single();
 		assertEquals(10, count);
 	}
 
 	@Test
 	public void testAgain() {
-		int count = Observable
-				.range(51, 10)
-				// log all
-				.lift(logger().prefix("again ").every(5).count().memory().log())
+		int count = Observable.range(51, 10)
+		// log all
+				.lift(logger().prefix("again").every(5).count().memory().log())
 				// count
-				.count().toBlockingObservable().single();
+				.count().toBlocking().single();
 		assertEquals(10, count);
 	}
 
@@ -51,7 +50,7 @@ public class LoggingTest {
 		// log all
 				.lift(logger().log())
 				// count
-				.count().toBlockingObservable().single();
+				.count().toBlocking().single();
 		assertEquals(10, count);
 	}
 }
