@@ -66,10 +66,25 @@ Order of some methods called on the ```logger()``` builder is significant. For i
 This 
 ```java
 Observable.range(11,3011)
-          .lift(logger().showValue().every(1000).showCount().log())
+          .lift(logger().showValue().showCount().every(1000).log())
           .subscribe();
 ```
 produces (output abbreviated for presentation here)
+```
+onSubscribe
+1010, count=1000
+2010, count=2000
+3010, count=3000
+onCompleted, count=3
+onUnsubscribe
+```
+but with the order of ```every``` and ```showCount``` reversed:
+```java
+Observable.range(11,3011)
+          .lift(logger().showValue().every(1000).showCount().log())
+          .subscribe();
+```
+produces (abbreviated)
 ```
 onSubscribe
 1010, count=1
@@ -78,7 +93,7 @@ onSubscribe
 onCompleted, count=3
 onUnsubscribe
 ```
-but with the order of ```every``` and ```showCount``` reversed:
+
 ```java
 Observable.range(11,3011)
           .lift(logger().showValue().showCount().every(1000).log())
