@@ -511,7 +511,7 @@ public class Logging {
 
 						if (logMemory) {
 							if (s.length() > 0)
-								s.append(",");
+								s.append(", ");
 							s.append(memoryUsage());
 						}
 						Logging.log(getLogger(), s.toString(),
@@ -522,11 +522,11 @@ public class Logging {
 						s.append(m.value().getThrowable().getMessage());
 						s.append(onErrorSuffix);
 						if (s.length() > 0)
-							s.append(",");
+							s.append(", ");
 						s.append(m.message());
 						if (logMemory) {
 							if (s.length() > 0)
-								s.append(",");
+								s.append(", ");
 							s.append(memoryUsage());
 						}
 						Logging.log(getLogger(), s.toString(), onErrorLevel, m
@@ -538,12 +538,14 @@ public class Logging {
 							s.append(String.valueOf(valueFunction.call(m
 									.value().getValue())));
 						s.append(onNextSuffix);
-						if (s.length() > 0)
-							s.append(",");
-						s.append(m.message());
+						if (m.message().length() > 0) {
+							if (s.length() > 0)
+								s.append(", ");
+							s.append(m.message());
+						}
 						if (logMemory) {
 							if (s.length() > 0)
-								s.append(",");
+								s.append(", ");
 							s.append(memoryUsage());
 						}
 						if (logStackTrace) {
