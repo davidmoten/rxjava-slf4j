@@ -160,7 +160,7 @@ public class Logging {
 			private Builder<T> source() {
 				StackTraceElement[] elements = Thread.currentThread()
 						.getStackTrace();
-				String callingClassName = elements[3].getClassName();
+				String callingClassName = elements[4].getClassName();
 				return name(callingClassName);
 			}
 
@@ -393,25 +393,19 @@ public class Logging {
 
 					if (m.value().isOnCompleted() && onCompleteMessage != null) {
 						StringBuilder s = new StringBuilder();
-						s.append(onCompleteMessage);
-						delimiter(s);
-						s.append(m.message());
-						if (logMemory) {
-							delimiter(s);
-							s.append(memoryUsage());
-						}
+						addDelimited(s, onCompleteMessage);
+						addDelimited(s, m.message());
+						addMemory(s);
 						Logging.log(getLogger(), s.toString(),
 								onCompletedLevel, null);
 					} else if (m.value().isOnError() && logOnError) {
 						StringBuilder s = new StringBuilder();
-						s.append(String.format(onErrorFormat, m.value()
-								.getThrowable().getMessage()));
-						delimiter(s);
-						s.append(m.message());
-						if (logMemory) {
-							delimiter(s);
-							s.append(memoryUsage());
-						}
+						addDelimited(
+								s,
+								String.format(onErrorFormat, m.value()
+										.getThrowable().getMessage()));
+						addDelimited(s, m.message());
+						addMemory(s);
 						Logging.log(getLogger(), s.toString(), onErrorLevel, m
 								.value().getThrowable());
 					} else if (m.value().isOnNext() && logOnNext) {
@@ -420,34 +414,42 @@ public class Logging {
 							s.append(String.format(onNextFormat, String
 									.valueOf(valueFunction.call(m.value()
 											.getValue()))));
-						if (m.message().length() > 0) {
-							delimiter(s);
-							s.append(m.message());
-						}
-						if (logMemory) {
-							delimiter(s);
-							s.append(memoryUsage());
-						}
-						if (logStackTrace) {
-							for (StackTraceElement elem : Thread
-									.currentThread().getStackTrace()) {
-								s.append("\n    ");
-								s.append(elem);
-							}
-						}
+						addDelimited(s, m.message());
+						addMemory(s);
+						addStackTrace(s);
 						Logging.log(getLogger(), s.toString(), onNextLevel,
 								null);
 					}
-
 				}
 
-				private void delimiter(StringBuilder s) {
-					if (s.length() > 0)
-						s.append(", ");
+				private void addStackTrace(StringBuilder s) {
+					if (logStackTrace) {
+						for (StackTraceElement elem : Thread.currentThread()
+								.getStackTrace()) {
+							s.append("\n    ");
+							s.append(elem);
+						}
+					}
+				}
+
+				private void addMemory(StringBuilder s) {
+					if (logMemory)
+						addDelimited(s, memoryUsage());
 				}
 
 			};
+		}
+	}
 
+	private static void delimiter(StringBuilder s) {
+		if (s.length() > 0)
+			s.append(", ");
+	}
+
+	private static void addDelimited(StringBuilder b, String s) {
+		if (s.length() > 0) {
+			delimiter(b);
+			b.append(s);
 		}
 	}
 
@@ -456,7 +458,7 @@ public class Logging {
 		Runtime r = Runtime.getRuntime();
 		long mem = r.totalMemory() - r.freeMemory();
 		s.append("mem=");
-		s.append(new DecimalFormat("0.0##").format(mem / 1000000.0));
+		s.append(new DecimalFormat("0").format(mem / 1000000.0));
 		s.append("MB, percent=");
 		s.append(new DecimalFormat("0.0").format((double) mem / r.maxMemory()));
 		return s.toString();
