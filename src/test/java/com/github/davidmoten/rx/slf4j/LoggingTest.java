@@ -36,9 +36,10 @@ public class LoggingTest {
 
 	@Test
 	public void testAgain() {
-		int count = Observable.range(51, 10)
-		// log all
-				.lift(logger().prefix("again ").every(5).count().log())
+		int count = Observable
+				.range(51, 10)
+				// log all
+				.lift(logger().prefix("again ").every(5).count().memory().log())
 				// count
 				.count().toBlockingObservable().single();
 		assertEquals(10, count);

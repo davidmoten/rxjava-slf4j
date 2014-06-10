@@ -1,5 +1,6 @@
 package com.github.davidmoten.rx.slf4j;
 
+import java.text.DecimalFormat;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -230,6 +231,7 @@ public class Logging {
 			private boolean logObject = false;
 			private Func1<T, ?> valueFunction = Functions.<T> identity();
 			private boolean logStackTrace = false;
+			private boolean logMemory = false;
 			private final PublishSubject<T> subject = PublishSubject
 					.<T> create();
 			private Observable<Message<T>> observable = subject.materialize()
@@ -240,45 +242,6 @@ public class Logging {
 							return new Message<T>(n, "");
 						}
 					});
-
-			private final Action1<Message<T>> log = new Action1<Message<T>>() {
-
-				@Override
-				public void call(Message<T> m) {
-					if (m.value().isOnCompleted() && onCompleteMessage != null) {
-						StringBuilder s = new StringBuilder();
-						s.append(onCompleteMessage);
-						if (s.length() > 0)
-							s.append(",");
-						s.append(m.message());
-						Logging.log(getLogger(), s.toString(),
-								onCompletedLevel, null);
-					} else if (m.value().isOnError() && logOnError) {
-						StringBuilder s = new StringBuilder();
-						s.append(onErrorPrefix);
-						s.append(m.value().getThrowable().getMessage());
-						s.append(onErrorSuffix);
-						if (s.length() > 0)
-							s.append(",");
-						s.append(m.message());
-						Logging.log(getLogger(), s.toString(), onErrorLevel, m
-								.value().getThrowable());
-					} else if (m.value().isOnNext() && logOnNext) {
-						StringBuilder s = new StringBuilder();
-						s.append(onNextPrefix);
-						if (logObject)
-							s.append(String.valueOf(valueFunction.call(m
-									.value().getValue())));
-						s.append(onNextSuffix);
-						if (s.length() > 0)
-							s.append(",");
-						s.append(m.message());
-						Logging.log(getLogger(), s.toString(), onNextLevel,
-								null);
-					}
-
-				}
-			};
 
 			public Logger getLogger() {
 				if (logger != null)
@@ -519,6 +482,11 @@ public class Logging {
 				return this;
 			}
 
+			public Builder<T> memory() {
+				logMemory = true;
+				return this;
+			}
+
 			public OperatorLogging<T> log() {
 				return new OperatorLogging<T>(new Parameters<T>(logger,
 						loggerName, onCompleteMessage, subscribedMessage,
@@ -530,8 +498,74 @@ public class Logging {
 						subject, observable.doOnNext(log)));
 			}
 
-		}
+			private final Action1<Message<T>> log = new Action1<Message<T>>() {
 
+				@Override
+				public void call(Message<T> m) {
+					if (m.value().isOnCompleted() && onCompleteMessage != null) {
+						StringBuilder s = new StringBuilder();
+						s.append(onCompleteMessage);
+						if (s.length() > 0)
+							s.append(",");
+						s.append(m.message());
+
+						if (logMemory) {
+							if (s.length() > 0)
+								s.append(",");
+							s.append(memoryUsage());
+						}
+						Logging.log(getLogger(), s.toString(),
+								onCompletedLevel, null);
+					} else if (m.value().isOnError() && logOnError) {
+						StringBuilder s = new StringBuilder();
+						s.append(onErrorPrefix);
+						s.append(m.value().getThrowable().getMessage());
+						s.append(onErrorSuffix);
+						if (s.length() > 0)
+							s.append(",");
+						s.append(m.message());
+						if (logMemory) {
+							if (s.length() > 0)
+								s.append(",");
+							s.append(memoryUsage());
+						}
+						Logging.log(getLogger(), s.toString(), onErrorLevel, m
+								.value().getThrowable());
+					} else if (m.value().isOnNext() && logOnNext) {
+						StringBuilder s = new StringBuilder();
+						s.append(onNextPrefix);
+						if (logObject)
+							s.append(String.valueOf(valueFunction.call(m
+									.value().getValue())));
+						s.append(onNextSuffix);
+						if (s.length() > 0)
+							s.append(",");
+						s.append(m.message());
+						if (logMemory) {
+							if (s.length() > 0)
+								s.append(",");
+							s.append(memoryUsage());
+						}
+						Logging.log(getLogger(), s.toString(), onNextLevel,
+								null);
+					}
+
+				}
+
+			};
+
+		}
+	}
+
+	private static String memoryUsage() {
+		StringBuilder s = new StringBuilder();
+		Runtime r = Runtime.getRuntime();
+		long mem = r.totalMemory() - r.freeMemory();
+		s.append("mem=");
+		s.append(new DecimalFormat("0.0##").format(mem / 1000000.0));
+		s.append("MB, percent=");
+		s.append(new DecimalFormat("0.0").format((double) mem / r.maxMemory()));
+		return s.toString();
 	}
 
 	public static <T> Parameters.Builder<T> logger() {
