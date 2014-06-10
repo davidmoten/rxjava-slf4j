@@ -1,7 +1,6 @@
 package com.github.davidmoten.rx.slf4j;
 
 import java.text.DecimalFormat;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
@@ -274,8 +273,13 @@ public class Logging {
 
 							@Override
 							public Message<T> call(Message<T> m) {
-								return m.append(label + "="
-										+ +count.incrementAndGet());
+								long val;
+								if (m.value().isOnNext())
+									val = count.incrementAndGet();
+								else
+									val = count.get();
+
+								return m.append(label + "=" + val);
 							}
 						});
 				return this;
@@ -293,7 +297,10 @@ public class Logging {
 
 								@Override
 								public Boolean call(Message<T> t) {
-									return count.incrementAndGet() % every == 0;
+									if (t.value().isOnNext())
+										return count.incrementAndGet() % every == 0;
+									else
+										return true;
 								}
 							});
 				return this;
@@ -331,7 +338,10 @@ public class Logging {
 						.filter(new Func1<Message<T>, Boolean>() {
 							@Override
 							public Boolean call(Message<T> t) {
-								return when.call(t.value().getValue());
+								if (t.value().isOnNext())
+									return when.call(t.value().getValue());
+								else
+									return true;
 							}
 						});
 				return this;
@@ -344,7 +354,10 @@ public class Logging {
 
 							@Override
 							public Boolean call(Message<T> t) {
-								return start <= count.incrementAndGet();
+								if (t.value().isOnNext())
+									return start <= count.incrementAndGet();
+								else
+									return true;
 							}
 						});
 				return this;
@@ -357,14 +370,12 @@ public class Logging {
 
 							@Override
 							public Boolean call(Message<T> t) {
-								return finish >= count.incrementAndGet();
+								if (t.value().isOnNext())
+									return finish >= count.incrementAndGet();
+								else
+									return true;
 							}
 						});
-				return this;
-			}
-
-			public Builder<T> sample(long period, TimeUnit timeUnit) {
-				this.observable = observable.sample(period, timeUnit);
 				return this;
 			}
 

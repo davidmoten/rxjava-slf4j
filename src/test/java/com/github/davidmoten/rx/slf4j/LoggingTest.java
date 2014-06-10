@@ -48,6 +48,16 @@ public class LoggingTest {
 	}
 
 	@Test
+	public void testSubscribe() {
+		int count = Observable
+				.range(11, 3010)
+				.lift(logger().showValue().showCount().every(1000).showMemory()
+						.log()).count().toBlocking().single();
+		assertEquals(3010, count);
+
+	}
+
+	@Test
 	public void testCallingClass() {
 
 		assertEquals(10, new CallingClass().count());
