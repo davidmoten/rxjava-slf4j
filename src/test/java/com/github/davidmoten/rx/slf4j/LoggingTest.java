@@ -28,7 +28,8 @@ public class LoggingTest {
 				// log all
 				.lift(logger().name("rx.Server").prefix("count every test")
 						.excludeValue().subscribed(Level.DEBUG)
-						.onCompleted(Level.DEBUG).showCount().every(2).log())
+						.onCompleted(Level.DEBUG).showCount("files").every(2)
+						.log())
 				// count
 				.count().toBlocking().single();
 		assertEquals(10, count);
