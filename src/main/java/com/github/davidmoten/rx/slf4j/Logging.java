@@ -378,7 +378,7 @@ public class Logging {
 				return this;
 			}
 
-			public Builder<T> count() {
+			public Builder<T> showCount() {
 				observable = observable
 						.map(new Func1<Message<T>, Message<T>>() {
 							AtomicLong count = new AtomicLong(0);
@@ -416,7 +416,7 @@ public class Logging {
 				return this;
 			}
 
-			public Builder<T> value() {
+			public Builder<T> showValue() {
 				return value(true);
 			}
 
@@ -425,12 +425,12 @@ public class Logging {
 				return this;
 			}
 
-			public Builder<T> exclude() {
+			public Builder<T> excludeValue() {
 				return value(false);
 			}
 
-			public Builder<T> stackTrace(boolean logStackTrace) {
-				this.logStackTrace = logStackTrace;
+			public Builder<T> showStackTrace() {
+				this.logStackTrace = true;
 				return this;
 			}
 
@@ -482,7 +482,7 @@ public class Logging {
 				return this;
 			}
 
-			public Builder<T> memory() {
+			public Builder<T> showMemory() {
 				logMemory = true;
 				return this;
 			}
@@ -545,6 +545,13 @@ public class Logging {
 							if (s.length() > 0)
 								s.append(",");
 							s.append(memoryUsage());
+						}
+						if (logStackTrace) {
+							for (StackTraceElement elem : Thread
+									.currentThread().getStackTrace()) {
+								s.append("\n    ");
+								s.append(elem);
+							}
 						}
 						Logging.log(getLogger(), s.toString(), onNextLevel,
 								null);

@@ -15,7 +15,7 @@ public class LoggingTest {
 	public void testName() {
 		int count = Observable.range(1, 10)
 		// log all
-				.lift(logger(LoggingTest.class).value().log())
+				.lift(logger(LoggingTest.class).showValue().log())
 				// count
 				.count().toBlocking().single();
 		assertEquals(10, count);
@@ -27,8 +27,8 @@ public class LoggingTest {
 				.range(1, 10)
 				// log all
 				.lift(logger().name("rx.Server").prefix("count every test")
-						.exclude().subscribed(Level.DEBUG)
-						.onCompleted(Level.DEBUG).count().every(2).log())
+						.excludeValue().subscribed(Level.DEBUG)
+						.onCompleted(Level.DEBUG).showCount().every(2).log())
 				// count
 				.count().toBlocking().single();
 		assertEquals(10, count);
@@ -36,9 +36,11 @@ public class LoggingTest {
 
 	@Test
 	public void testAgain() {
-		int count = Observable.range(51, 10)
-		// log all
-				.lift(logger().prefix("again").every(5).count().memory().log())
+		int count = Observable
+				.range(51, 10)
+				// log all
+				.lift(logger().prefix("again").every(5).showCount()
+						.showStackTrace().excludeValue().showMemory().log())
 				// count
 				.count().toBlocking().single();
 		assertEquals(10, count);
