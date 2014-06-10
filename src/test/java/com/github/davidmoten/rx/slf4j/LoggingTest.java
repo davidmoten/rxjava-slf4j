@@ -40,8 +40,8 @@ public class LoggingTest {
 		int count = Observable
 				.range(51, 10)
 				// log all
-				.lift(logger().prefix("again").every(5).showCount()
-						.showStackTrace().excludeValue().showMemory().log())
+				.lift(logger().showCount().start(2).finish(2).showStackTrace()
+						.showMemory().log())
 				// count
 				.count().toBlocking().single();
 		assertEquals(10, count);
@@ -49,11 +49,17 @@ public class LoggingTest {
 
 	@Test
 	public void testCallingClass() {
-		int count = Observable.range(1, 10)
-		// log all
-				.lift(logger().log())
-				// count
-				.count().toBlocking().single();
-		assertEquals(10, count);
+
+		assertEquals(10, new CallingClass().count());
+	}
+
+	private static class CallingClass {
+		public int count() {
+			return Observable.range(1, 10)
+			// log all
+					.lift(logger().showValue().log())
+					// count
+					.count().toBlocking().single();
+		}
 	}
 }

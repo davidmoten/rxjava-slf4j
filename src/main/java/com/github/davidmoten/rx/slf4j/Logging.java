@@ -26,68 +26,32 @@ public class Logging {
 	public static class Parameters<T> {
 
 		private final Logger logger;
-		private final String loggerName;
-		private final String onCompleteMessage;
 		private final String subscribedMessage;
 		private final String unsubscribedMessage;
-		private final boolean logOnNext;
-		private final boolean logOnError;
-		private final String onErrorFormat;
-		private final String onNextFormat;
-		private final Level onNextLevel;
-		private final Level onErrorLevel;
-		private final Level onCompletedLevel;
 		private final Level subscribedLevel;
 		private final Level unsubscribedLevel;
-		private final boolean logStackTrace;
 		private final PublishSubject<T> subject;
 		private final Observable<Message<T>> observable;
-		private final Func1<T, ?> valueFunction;
 
-		Parameters(Logger logger, String loggerName, String onCompleteMessage,
-				String subscribedMessage, String unsubscribedMessage,
-				boolean logOnNext, boolean logOnError, String onErrorFormat,
-				String onNextFormat, Level onNextLevel, Level onErrorLevel,
-				Level onCompletedLevel, Level subscribedLevel,
-				Level unsubscribedLevel, Func1<T, ?> valueFunction,
-				boolean logStackTrace, PublishSubject<T> subject,
+		Parameters(Logger logger, String subscribedMessage,
+				String unsubscribedMessage, Level subscribedLevel,
+				Level unsubscribedLevel, PublishSubject<T> subject,
 				Observable<Message<T>> observable) {
 			this.logger = logger;
-			this.loggerName = loggerName;
-			this.onCompleteMessage = onCompleteMessage;
 			this.subscribedMessage = subscribedMessage;
 			this.unsubscribedMessage = unsubscribedMessage;
-			this.logOnNext = logOnNext;
-			this.logOnError = logOnError;
-			this.onErrorFormat = onErrorFormat;
-			this.onNextFormat = onNextFormat;
-			this.onNextLevel = onNextLevel;
-			this.onErrorLevel = onErrorLevel;
-			this.onCompletedLevel = onCompletedLevel;
 			this.subscribedLevel = subscribedLevel;
 			this.unsubscribedLevel = unsubscribedLevel;
-			this.valueFunction = valueFunction;
-			this.logStackTrace = logStackTrace;
 			this.subject = subject;
 			this.observable = observable;
 		}
 
 		public Logger getLogger() {
-			if (logger != null)
-				return logger;
-			else if (loggerName != null)
-				return LoggerFactory.getLogger(loggerName);
-			else {
-				return DEFAULT_LOGGER;
-			}
+			return logger;
 		}
 
-		public String getLoggerName() {
-			return loggerName;
-		}
-
-		public String getOnCompleteMessage() {
-			return onCompleteMessage;
+		public Level getSubscribedLevel() {
+			return subscribedLevel;
 		}
 
 		public String getSubscribedMessage() {
@@ -98,48 +62,8 @@ public class Logging {
 			return unsubscribedMessage;
 		}
 
-		public boolean getLogOnNext() {
-			return logOnNext;
-		}
-
-		public boolean getLogOnError() {
-			return logOnError;
-		}
-
-		public String getOnErrorFormat() {
-			return onErrorFormat;
-		}
-
-		public String getOnNextFormat() {
-			return onNextFormat;
-		}
-
-		public Level getOnNextLevel() {
-			return onNextLevel;
-		}
-
-		public Level getOnErrorLevel() {
-			return onErrorLevel;
-		}
-
-		public Level getOnCompletedLevel() {
-			return onCompletedLevel;
-		}
-
-		public Level getSubscribedLevel() {
-			return subscribedLevel;
-		}
-
 		public Level getUnsubscribedLevel() {
 			return unsubscribedLevel;
-		}
-
-		public boolean getLogStackTrace() {
-			return logStackTrace;
-		}
-
-		public Func1<T, ?> getValueFunction() {
-			return valueFunction;
 		}
 
 		public Observable<Message<T>> getObservable() {
@@ -233,11 +157,10 @@ public class Logging {
 				return this;
 			}
 
-			public Builder<T> source() {
+			private Builder<T> source() {
 				StackTraceElement[] elements = Thread.currentThread()
 						.getStackTrace();
-				String callingClassName = elements[elements.length - 1]
-						.getClassName();
+				String callingClassName = elements[3].getClassName();
 				return name(callingClassName);
 			}
 
@@ -376,7 +299,7 @@ public class Logging {
 				return this;
 			}
 
-			public Builder<T> value(boolean logValue) {
+			public Builder<T> showValue(boolean logValue) {
 				if (logValue)
 					return showValue();
 				else
@@ -421,20 +344,20 @@ public class Logging {
 
 							@Override
 							public Boolean call(Message<T> t) {
-								return start <= count.get();
+								return start <= count.incrementAndGet();
 							}
 						});
 				return this;
 			}
 
-			public Builder<T> finish(final Long finish) {
+			public Builder<T> finish(final long finish) {
 				observable = observable
 						.filter(new Func1<Message<T>, Boolean>() {
 							AtomicLong count = new AtomicLong(0);
 
 							@Override
 							public Boolean call(Message<T> t) {
-								return finish >= count.get();
+								return finish >= count.incrementAndGet();
 							}
 						});
 				return this;
@@ -457,12 +380,9 @@ public class Logging {
 			}
 
 			public OperatorLogging<T> log() {
-				return new OperatorLogging<T>(new Parameters<T>(logger,
-						loggerName, onCompleteMessage, subscribedMessage,
-						unsubscribedMessage, logOnNext, logOnError,
-						onErrorFormat, onNextFormat, onNextLevel, onErrorLevel,
-						onCompletedLevel, subscribedLevel, unsubscribedLevel,
-						valueFunction, logStackTrace, subject,
+				return new OperatorLogging<T>(new Parameters<T>(getLogger(),
+						subscribedMessage, unsubscribedMessage,
+						subscribedLevel, unsubscribedLevel, subject,
 						observable.doOnNext(log)));
 			}
 
@@ -470,6 +390,7 @@ public class Logging {
 
 				@Override
 				public void call(Message<T> m) {
+
 					if (m.value().isOnCompleted() && onCompleteMessage != null) {
 						StringBuilder s = new StringBuilder();
 						s.append(onCompleteMessage);
