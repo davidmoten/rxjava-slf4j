@@ -52,9 +52,9 @@ Note that logger for the class is automatically specified and that subscribe, un
 
 Repetition
 -------------------------
+Some methods on the ```logger()``` builder can be called repeatedly with a compounding effect:
 
-Some methods on the ```logger()``` builder can be called repeatedly:
-Shows every 3000th value:
+This shows every 3000th value:
 ```java
 logger().every(1000).every(3).log()
 ```
