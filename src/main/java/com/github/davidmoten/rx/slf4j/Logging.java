@@ -468,9 +468,9 @@ public class Logging {
 		StringBuilder s = new StringBuilder();
 		Runtime r = Runtime.getRuntime();
 		long mem = r.totalMemory() - r.freeMemory();
-		s.append("mem=");
+		s.append("usedMem=");
 		s.append(new DecimalFormat("0").format(mem / 1000000.0));
-		s.append("MB, percent=");
+		s.append("MB, percentMax=");
 		s.append(new DecimalFormat("0.0").format((double) mem / r.maxMemory()));
 		return s.toString();
 	}
