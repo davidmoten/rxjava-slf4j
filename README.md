@@ -50,14 +50,19 @@ This is the result:
 
 Note that logger for the class is automatically specified and that subscribe, unsubscribe and completed events are all logged (by default at different log levels).
 
-Order
---------
+Repetition
+-------------------------
 
-Order of the methods called on the logger() builder is important. For instance:
-
+Some methods on the ```logger()``` builder can be called repeatedly:
 Shows every 3000th value:
 ```java
 logger().every(1000).every(3).log()
+
+
+Order
+----------------
+Order of some methods called on the ```logger()``` builder is significant. For instance:
+
 ```
 This 
 ```java
