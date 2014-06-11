@@ -95,9 +95,7 @@ onUnsubscribe
 ```
 
 ```java
-Observable.range(11,3011)
-          .lift(logger().showValue().showCount().every(1000).log())
-          .subscribe();
+logger().showValue().showCount().every(1000).log()
 ```
 produces (abbreviated)
 ```
@@ -112,9 +110,7 @@ onUnsubscribe
 You can have both counts differentiated by specifying a label for the ```showCount``` method:
 
 ```java
-Observable.range(11,3011)
-          .lift(logger().showValue().showCount().every(1000).showCount("inner").log())
-          .subscribe();
+logger().showValue().showCount().every(1000).showCount("inner").log()
 ```
 produces (abbreviated)
 ```
@@ -125,6 +121,3 @@ onSubscribe
 onCompleted, count=3000, inner=3
 onUnsubscribe
 ```
-
-
-
