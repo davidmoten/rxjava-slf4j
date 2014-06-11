@@ -80,9 +80,7 @@ onUnsubscribe
 ```
 but with the order of ```every``` and ```showCount``` reversed:
 ```java
-Observable.range(11,3011)
-          .lift(logger().showValue().every(1000).showCount().log())
-          .subscribe();
+logger().showValue().every(1000).showCount().log()
 ```
 produces (abbreviated)
 ```
