@@ -170,10 +170,10 @@ Observable.range(1, 100)
 ```
 produces
 ```
-2014-06-11 10:28:47.859 [main] INFO  Boo - created subscription
-2014-06-11 10:28:47.865 [main] DEBUG Boo - time=4days, count=4, finalCount=1
-2014-06-11 10:28:47.865 [main] DEBUG Boo - time=10days, count=10, finalCount=2
-2014-06-11 10:28:47.865 [main] DEBUG Boo - time=16days, count=16, finalCount=3
-2014-06-11 10:28:47.866 [main] INFO  Boo - onCompleted, count=100, finished, finalCount=3
-2014-06-11 10:28:47.868 [main] DEBUG Boo - ended subscription
+2014-06-11 10:31:33.431 [main] INFO  Boo - created subscription
+2014-06-11 10:31:33.438 [main] DEBUG Boo - time=4days, count=4, finalCount=1
+2014-06-11 10:31:33.438 [main] DEBUG Boo - time=10days, count=10, finalCount=2
+2014-06-11 10:31:33.439 [main] DEBUG Boo - time=16days, count=16, finalCount=3
+2014-06-11 10:31:33.440 [main] INFO  Boo - finished, count=100, finalCount=3
+2014-06-11 10:31:33.441 [main] DEBUG Boo - ended subscription
 ```

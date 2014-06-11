@@ -107,7 +107,7 @@ public class Logging {
 
 			private Logger logger;
 			private String loggerName;
-			private final String onCompleteMessage = "onCompleted";
+			private String onCompleteMessage = "onCompleted";
 			private String subscribedMessage = "onSubscribe";
 			private String unsubscribedMessage = "onUnsubscribe";
 			private final boolean logOnNext = true;
@@ -168,17 +168,7 @@ public class Logging {
 			}
 
 			public Builder<T> onCompleted(final String onCompleteMessage) {
-				this.observable = observable
-						.map(new Func1<Message<T>, Message<T>>() {
-
-							@Override
-							public Message<T> call(Message<T> m) {
-								if (m.value().isOnCompleted())
-									return m.append(onCompleteMessage);
-								else
-									return m;
-							}
-						});
+				this.onCompleteMessage = onCompleteMessage;
 				return this;
 			}
 
