@@ -119,3 +119,63 @@ onSubscribe
 onCompleted, count=3000, inner=3
 onUnsubscribe
 ```
+
+Kitchen Sink Example
+---------------------------
+This demos most stuff:
+
+```java
+Observable.range(1, 100)
+	// log
+	.lift(Logging.<Integer> logger("Boo")
+			// count
+			.showCount()
+			// start on 2nd item
+			.start(2)
+			// ignore after 8th item
+			.finish(18)
+			// take every third item
+			.every(3)
+			// set the onCompleted message
+			.onCompleted("finished")
+			// at logging level
+			.onCompleted(Level.INFO)
+			// set the error logging level
+			.onError(Level.WARN)
+			// onNext at debug level
+			.onNext(Level.DEBUG)
+			// how to format the onNext item
+			.onNextFormat("time=%sdays")
+			// show onNext items
+			.showValue()
+			// show subscribed message at INFO level
+			.subscribed(Level.INFO)
+			// the message to show at subscription time
+			.subscribed("created subscription")
+			// the unsubscribe message at DEBUG level
+			.unsubscribed(Level.DEBUG)
+			// the unsubscribe message
+			.unsubscribed("ended subscription")
+			// only when item is an even number
+			.when(new Func1<Integer, Boolean>() {
+				@Override
+				public Boolean call(Integer n) {
+					return n % 2 == 0;
+				}
+			})
+			// count those items passing the filters above
+			.showCount("finalCount")
+			// build the operator
+			.log())
+		// block and get the answer
+		.toBlocking().last();
+```
+produces
+```
+2014-06-11 10:18:43.536 [main] INFO  Boo - created subscription
+2014-06-11 10:18:43.537 [main] DEBUG Boo - 4, count=4,finalCount=1
+2014-06-11 10:18:43.537 [main] DEBUG Boo - 10, count=10,finalCount=2
+2014-06-11 10:18:43.537 [main] DEBUG Boo - 16, count=16,finalCount=3
+2014-06-11 10:18:43.538 [main] INFO  Boo - onCompleted, count=100,finished,finalCount=3
+2014-06-11 10:18:43.539 [main] DEBUG Boo - ended subscription
+```

@@ -167,7 +167,7 @@ public class Logging {
 				return name(cls.getName());
 			}
 
-			public Builder<T> onComplete(final String onCompleteMessage) {
+			public Builder<T> onCompleted(final String onCompleteMessage) {
 				this.observable = observable
 						.map(new Func1<Message<T>, Message<T>>() {
 
@@ -231,8 +231,8 @@ public class Logging {
 				return this;
 			}
 
-			public Builder<T> onNextSuffix(String onNextSuffix) {
-				this.onNextFormat = onNextSuffix;
+			public Builder<T> onNextFormat(String onNextFormat) {
+				this.onNextFormat = onNextFormat;
 				return this;
 			}
 
@@ -333,7 +333,7 @@ public class Logging {
 				return this;
 			}
 
-			public Builder<T> when(final Func1<T, Boolean> when) {
+			public Builder<T> when(final Func1<? super T, Boolean> when) {
 				observable = observable
 						.filter(new Func1<Message<T>, Boolean>() {
 							@Override
