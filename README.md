@@ -50,17 +50,24 @@ This is the result:
 
 Note that logger for the class is automatically specified and that subscribe, unsubscribe and completed events are all logged (by default at different log levels).
 
-Repetition
+Composition
 -------------------------
-Some methods on the ```logger()``` builder can be called repeatedly with a compounding effect:
+Some methods on the ```logger()``` builder can be called repeatedly or in different orders with a compounding effect:
 
+The methods are: 
+* ```every```
+* ```start```
+* ```finish```
+* ```showCount```
+* ```when```
+
+###Repetition
 This shows every 3000th value:
 ```java
 logger().every(1000).every(3).log()
 ```
 
-Order
-----------------
+###Order
 Order of some methods called on the ```logger()``` builder is significant. For instance:
 
 This 
