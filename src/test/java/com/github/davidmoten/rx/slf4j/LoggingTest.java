@@ -97,8 +97,6 @@ public class LoggingTest {
 						.onNext(Level.DEBUG)
 						// how to format the onNext item
 						.onNextFormat("time=%sdays")
-						// show onNext items
-						.showValue()
 						// show subscribed message at INFO level
 						.subscribed(Level.INFO)
 						// the message to show at subscription time

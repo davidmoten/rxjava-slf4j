@@ -97,7 +97,7 @@ public class Logging {
 
 			public Message<T> append(String s) {
 				if (message.length() > 0)
-					return new Message<T>(value, message + "," + s);
+					return new Message<T>(value, message + ", " + s);
 				else
 					return new Message<T>(value, message + s);
 			}
@@ -314,7 +314,8 @@ public class Logging {
 			}
 
 			public Builder<T> showValue() {
-				onNextFormat = "%s";
+				if (onNextFormat.length() == 0)
+					onNextFormat = "%s";
 				return this;
 			}
 

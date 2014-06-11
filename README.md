@@ -146,8 +146,6 @@ Observable.range(1, 100)
 			.onNext(Level.DEBUG)
 			// how to format the onNext item
 			.onNextFormat("time=%sdays")
-			// show onNext items
-			.showValue()
 			// show subscribed message at INFO level
 			.subscribed(Level.INFO)
 			// the message to show at subscription time
@@ -172,10 +170,10 @@ Observable.range(1, 100)
 ```
 produces
 ```
-2014-06-11 10:18:43.536 [main] INFO  Boo - created subscription
-2014-06-11 10:18:43.537 [main] DEBUG Boo - 4, count=4,finalCount=1
-2014-06-11 10:18:43.537 [main] DEBUG Boo - 10, count=10,finalCount=2
-2014-06-11 10:18:43.537 [main] DEBUG Boo - 16, count=16,finalCount=3
-2014-06-11 10:18:43.538 [main] INFO  Boo - onCompleted, count=100,finished,finalCount=3
-2014-06-11 10:18:43.539 [main] DEBUG Boo - ended subscription
+2014-06-11 10:28:47.859 [main] INFO  Boo - created subscription
+2014-06-11 10:28:47.865 [main] DEBUG Boo - time=4days, count=4, finalCount=1
+2014-06-11 10:28:47.865 [main] DEBUG Boo - time=10days, count=10, finalCount=2
+2014-06-11 10:28:47.865 [main] DEBUG Boo - time=16days, count=16, finalCount=3
+2014-06-11 10:28:47.866 [main] INFO  Boo - onCompleted, count=100, finished, finalCount=3
+2014-06-11 10:28:47.868 [main] DEBUG Boo - ended subscription
 ```
