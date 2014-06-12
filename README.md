@@ -98,20 +98,6 @@ onSubscribe
 onCompleted, count=3
 onUnsubscribe
 ```
-
-```java
-logger().showValue().showCount().every(1000).log()
-```
-produces (abbreviated)
-```
-onSubscribe
-1010, count=1000
-2010, count=2000
-3010, count=3000
-onCompleted, count=3
-onUnsubscribe
-```
-
 You can have both counts differentiated by specifying a label for the ```showCount``` method:
 
 ```java
