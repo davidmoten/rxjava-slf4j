@@ -126,7 +126,7 @@ Observable.range(1, 100)
 			.showCount()
 			// start on 2nd item
 			.start(2)
-			// ignore after 8th item
+			// ignore after 18th item
 			.finish(18)
 			// take every third item
 			.every(3)
