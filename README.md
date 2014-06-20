@@ -98,7 +98,6 @@ onSubscribe
 onCompleted, count=3
 onUnsubscribe
 ```
-gits
 You can have both counts differentiated by specifying a label for the ```showCount``` method:
 
 ```java
