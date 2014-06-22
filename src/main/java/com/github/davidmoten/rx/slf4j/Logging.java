@@ -31,7 +31,7 @@ public class Logging {
         private final PublishSubject<T> subject;
         private final Observable<Message<T>> observable;
 
-        Parameters(Logger logger, String subscribedMessage, String unsubscribedMessage, Level subscribedLevel,
+        private Parameters(Logger logger, String subscribedMessage, String unsubscribedMessage, Level subscribedLevel,
                 Level unsubscribedLevel, PublishSubject<T> subject, Observable<Message<T>> observable) {
             this.logger = logger;
             this.subscribedMessage = subscribedMessage;
@@ -142,11 +142,24 @@ public class Logging {
             private Builder() {
             }
 
+            /**
+             * Sets the SLF4J {@link Logger} to be used to do the logging.
+             * 
+             * @param logger
+             * @return
+             */
             public Builder<T> logger(Logger logger) {
                 this.logger = logger;
                 return this;
             }
 
+            /**
+             * Sets the name of the {@link Logger} to used to do the logging. Is
+             * used as in {@link LoggerFactory#getLogger(String)}.
+             * 
+             * @param loggerName
+             * @return
+             */
             public Builder<T> name(String loggerName) {
                 this.loggerName = loggerName;
                 return this;
@@ -158,20 +171,45 @@ public class Logging {
                 return name(callingClassName);
             }
 
+            /**
+             * Sets the cls to be used to create a {@link Logger} to do the
+             * logging. It is used as in {@link LoggerFactory#getLogger(Class)}.
+             * 
+             * @param cls
+             * @return
+             */
             public Builder<T> logger(Class<?> cls) {
                 return name(cls.getName());
             }
 
+            /**
+             * The message to be logged on stream completion.
+             * 
+             * @param onCompleteMessage
+             * @return
+             */
             public Builder<T> onCompleted(final String onCompleteMessage) {
                 this.onCompleteMessage = onCompleteMessage;
                 return this;
             }
 
+            /**
+             * The message to be logged when subscribed.
+             * 
+             * @param subscribedMessage
+             * @return
+             */
             public Builder<T> subscribed(String subscribedMessage) {
                 this.subscribedMessage = subscribedMessage;
                 return this;
             }
 
+            /**
+             * The message to be logged when unsubscribed.
+             * 
+             * @param unsubscribedMessage
+             * @return
+             */
             public Builder<T> unsubscribed(String unsubscribedMessage) {
                 this.unsubscribedMessage = unsubscribedMessage;
                 return this;
