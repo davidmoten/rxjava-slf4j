@@ -116,7 +116,7 @@ public class Logging {
             private Level onCompletedLevel = Level.INFO;
             private Level subscribedLevel = Level.DEBUG;
             private Level unsubscribedLevel = Level.DEBUG;
-            private Func1<T, ?> valueFunction = Functions.<T> identity();
+            private Func1<? super T, ?> valueFunction = Functions.<T> identity();
             private boolean logStackTrace = false;
             private boolean logMemory = false;
             private final PublishSubject<T> subject = PublishSubject.<T> create();
@@ -338,7 +338,7 @@ public class Logging {
                 return this;
             }
 
-            public Builder<T> value(Func1<T, ?> function) {
+            public Builder<T> value(Func1<? super T, ?> function) {
                 this.valueFunction = function;
                 return this;
             }
@@ -396,7 +396,7 @@ public class Logging {
                 return this;
             }
 
-            public Builder<T> to(Func1<Observable<Message<T>>, Observable<Message<T>>> f) {
+            public Builder<T> to(Func1<Observable<? super Message<T>>, Observable<Message<T>>> f) {
                 this.observable = f.call(observable);
                 return this;
             }
