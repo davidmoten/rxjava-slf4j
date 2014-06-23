@@ -5,6 +5,8 @@ Logging utilities for use with RxJava and [SLF4J](http://www.slf4j.org/) which b
 
 Status: *beta, released to Maven Central*
 
+Continuous integration with Jenkins for this project is [here](https://xuml-tools.ci.cloudbees.com/). <a href="https://xuml-tools.ci.cloudbees.com/"><img  src="http://web-static-cloudfront.s3.amazonaws.com/images/badges/BuiltOnDEV.png"/></a>
+
 [Maven reports](http://davidmoten.github.io/rxjava-slf4j/) including [javadoc](http://davidmoten.github.io/rxjava-slf4j/apidocs/index.html).
 
 Getting started
