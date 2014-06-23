@@ -3,7 +3,9 @@ rxjava-slf4j
 
 Logging utilities for use with RxJava and [SLF4J](http://www.slf4j.org/) which bridges to the major popular logging frameworks.
 
-Status: *pre-alpha*
+Status: *beta, released to Maven Central*
+
+[Maven reports](http://davidmoten.github.io/rxjava-slf4j/) including [javadoc](http://davidmoten.github.io/rxjava-slf4j/apidocs/index.html).
 
 Getting started
 -----------------
@@ -12,7 +14,7 @@ Add this to your pom.xml:
 <dependency>
   <groupId>com.github.davidmoten</groupId>
   <artifactId>rxjava-slf4j</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1</version>
 </dependency>
 ```
 
