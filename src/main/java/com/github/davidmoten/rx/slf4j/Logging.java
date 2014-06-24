@@ -270,7 +270,7 @@ public class Logging {
 			 * <tt>onErrorFormat</tt> (as in
 			 * {@link String#format(String, Object...)}.
 			 * 
-			 * @param onErrorPrefix
+			 * @param onErrorFormat
 			 * @return
 			 */
 			public Builder<T> onErrorFormat(String onErrorFormat) {
@@ -560,6 +560,7 @@ public class Logging {
 	 * Returns a builder for which the {@link Logger} is based on the given name
 	 * (using {@link LoggerFactory#getLogger(String)}.
 	 * 
+     * @param name logger name
 	 * @return builder
 	 */
 	public static <T> Parameters.Builder<T> logger(String name) {
@@ -569,6 +570,7 @@ public class Logging {
 	/**
 	 * Returns a builder using the supplied {@link Logger}.
 	 * 
+     * @param logger
 	 * @return builder
 	 */
 	public static <T> Parameters.Builder<T> logger(Logger logger) {
@@ -579,6 +581,7 @@ public class Logging {
 	 * Returns a builder for which the {@link Logger} is based on the given
 	 * class (using {@link LoggerFactory#getLogger(Class)}.
 	 * 
+     * @param cls class to base the logger on 
 	 * @return builder
 	 */
 	public static <T> Parameters.Builder<T> logger(Class<?> cls) {
