@@ -71,7 +71,7 @@ The methods of ```logger()``` are listed [here](http://davidmoten.github.io/rxja
 
 Composition
 -------------------------
-Some methods on the ```logger()``` builder can be called repeatedly or in different orders with a compounding effect:
+Some methods on the ```logger()``` [builder](http://davidmoten.github.io/rxjava-slf4j/apidocs/com/github/davidmoten/rx/slf4j/Logging.Parameters.Builder.html). can be called repeatedly or in different orders with a compounding effect:
 
 The methods are: 
 * ```every```
@@ -79,6 +79,8 @@ The methods are:
 * ```finish```
 * ```showCount```
 * ```when```
+* ```onNext```
+* ```onError```
 
 ###Repetition
 This shows every 3000th value:
