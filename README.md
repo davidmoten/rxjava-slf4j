@@ -63,7 +63,7 @@ This is the result:
 2014-06-11 09:35:54.705 [main] DEBUG com.github.davidmoten.rx.slf4j.LoggingTest - onUnsubscribe
 ```
 
-Note that logger for the class is automatically specified and that subscribe, unsubscribe and completed events are all logged (by default at different log levels).
+Note that the logger for the class is automatically set and that subscribe, unsubscribe and completed events are all logged (by default at different log levels).
 
 Available builder methods 
 ---------------------------
