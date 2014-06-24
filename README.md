@@ -136,7 +136,7 @@ onUnsubscribe
 
 More examples
 ---------------
-Here's a useful one for me. I want to count the total number of items and see the total number of items that pass a criterion. Let's count the number of integers divisible by 3 between 0 and n:
+Here's a useful one for me. I want to count the total number of items and see the total number of items that pass a criterion. Let's count the number of integers divisible by 3 between 0 and 1000:
 
 ```java
 Observable
