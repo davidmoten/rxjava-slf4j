@@ -9,6 +9,15 @@ Continuous integration with Jenkins for this project is [here](https://xuml-tool
 
 [Maven reports](http://davidmoten.github.io/rxjava-slf4j/) including [javadoc](http://davidmoten.github.io/rxjava-slf4j/apidocs/index.html).
 
+Features
+--------------
+* ```source.lift(Logger.logger(). <COMMANDS> .log())``` is the pattern
+* Don't need to make the static ```Logger`` declaration in each class (```private static final Logger log = LoggerFactory.getLogger(A.class);```)
+* Convenient chained methods for specifying what things to log and at what level
+* Log subscription and unsubscription (handy for checking your custom operator is doing the right thing)
+* Avoid anonymous Action classes for logging (< java 8)
+* Still convenient for java 8 despite the existence of lambdas
+* 
 Getting started
 -----------------
 Add this to your pom.xml:
