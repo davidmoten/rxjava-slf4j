@@ -150,9 +150,9 @@ Observable
     .subscribe();
 ```
 
-produces:
+produces (abbreviated):
 ```
-2014-06-25 09:34:48.533 [main] INFO  com.github.davidmoten.rx.slf4j.LoggingTest - onCompleted, total=1000, divisbleBy3=333
+onCompleted, total=1000, divisbleBy3=333
 ```
 
 Kitchen Sink Example
