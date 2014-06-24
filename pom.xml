@@ -168,6 +168,7 @@
                                 <aggregate>true</aggregate>
                             </configuration>
                         </plugin>
+<!--
                         <plugin>
                             <groupId>org.codehaus.mojo</groupId>
                             <artifactId>findbugs-maven-plugin</artifactId>
@@ -175,9 +176,8 @@
                             <configuration>
                                 <xmlOutput>true</xmlOutput>
                                 <effort>Max</effort>
-                                <!--<excludeFilterFile>findbugs-exclude-filter-amsa.xml</excludeFilterFile> -->
                             </configuration>
-                        </plugin>
+                        </plugin>-->
                         <plugin>
                             <groupId>org.codehaus.mojo</groupId>
                             <artifactId>jdepend-maven-plugin</artifactId>
