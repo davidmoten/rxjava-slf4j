@@ -17,7 +17,7 @@ Features
 * Log subscription and unsubscription (handy for checking your custom operator is doing the right thing)
 * Avoid anonymous Action classes for logging (< java 8)
 * Still convenient for java 8 despite the existence of lambdas
-* 
+
 Getting started
 -----------------
 Add this to your pom.xml:
