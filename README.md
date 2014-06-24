@@ -134,6 +134,27 @@ onCompleted, count=3000, inner=3
 onUnsubscribe
 ```
 
+More examples
+---------------
+Here's a useful one for me. I want to count the total number of items and see the total number of items that pass a criterion. Let's count the number of integers divisible by 3 between 0 and n:
+
+```java
+Observable
+    .range(1,1000)
+    .lift(Logging.<Integer>logger()
+                 .showCount("total")
+                 .when( x -> x%3==0)
+                 .showCount("divisbleBy3")
+                 .onNext(false)
+                 .log())
+    .subscribe();
+```
+
+produces:
+```
+2014-06-25 09:34:48.533 [main] INFO  com.github.davidmoten.rx.slf4j.LoggingTest - onCompleted, total=1000, divisbleBy3=333
+```
+
 Kitchen Sink Example
 ---------------------------
 This demos most stuff:
