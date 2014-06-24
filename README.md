@@ -15,6 +15,8 @@ Features
 * Don't need to make the static ```Logger``` declaration in each class (```private static final Logger log = LoggerFactory.getLogger(A.class);```)
 * Convenient chained methods for specifying what things to log and at what level
 * Log subscription and unsubscription (handy for checking your custom operator is doing the right thing)
+* Log counts
+* Log memory usage
 * Avoid anonymous ```ActionN``` classes for logging (< java 8)
 * Still convenient for java 8 despite the existence of lambdas
 
