@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import rx.Notification;
 import rx.Observable;
+import rx.Observable.Operator;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Functions;
@@ -170,13 +171,6 @@ public class Logging {
 				return this;
 			}
 
-			private Builder<T> source() {
-				StackTraceElement[] elements = Thread.currentThread()
-						.getStackTrace();
-				String callingClassName = elements[4].getClassName();
-				return name(callingClassName);
-			}
-
 			/**
 			 * Sets the cls to be used to create a {@link Logger} to do the
 			 * logging. It is used as in {@link LoggerFactory#getLogger(Class)}.
@@ -221,6 +215,13 @@ public class Logging {
 				return this;
 			}
 
+			/**
+			 * If and only if <tt>logOnNext</tt> is true requests that
+			 * <i>onNext</i> values are logged.
+			 * 
+			 * @param logOnNext
+			 * @return
+			 */
 			public Builder<T> onNext(final boolean logOnNext) {
 				this.observable = observable
 						.filter(new Func1<Message<T>, Boolean>() {
@@ -233,6 +234,13 @@ public class Logging {
 				return this;
 			}
 
+			/**
+			 * If and only if <tt>logOnError</tt> is true requests that
+			 * <i>onError</i> notifications are logged.
+			 * 
+			 * @param logOnError
+			 * @return
+			 */
 			public Builder<T> onError(final boolean logOnError) {
 				this.observable = observable
 						.filter(new Func1<Message<T>, Boolean>() {
@@ -245,11 +253,26 @@ public class Logging {
 				return this;
 			}
 
+			/**
+			 * Requests that errors are to be prefixed with value of
+			 * <tt>onErrorPrefix</tt>.
+			 * 
+			 * @param onErrorPrefix
+			 * @return
+			 */
 			public Builder<T> onErrorPrefix(String onErrorPrefix) {
 				this.onErrorFormat = onErrorPrefix + "%s";
 				return this;
 			}
 
+			/**
+			 * Requests that errors are to be formatted using
+			 * <tt>onErrorFormat</tt> (as in
+			 * {@link String#format(String, Object...)}.
+			 * 
+			 * @param onErrorPrefix
+			 * @return
+			 */
 			public Builder<T> onErrorFormat(String onErrorFormat) {
 				this.onErrorFormat = onErrorFormat;
 				return this;
@@ -427,6 +450,13 @@ public class Logging {
 						observable.doOnNext(log)));
 			}
 
+			private Builder<T> source() {
+				StackTraceElement[] elements = Thread.currentThread()
+						.getStackTrace();
+				String callingClassName = elements[4].getClassName();
+				return name(callingClassName);
+			}
+
 			private final Action1<Message<T>> log = new Action1<Message<T>>() {
 
 				@Override
@@ -505,27 +535,57 @@ public class Logging {
 		return s.toString();
 	}
 
+	/**
+	 * Returns an {@link Operator} that logs every <i>onNext</i> value using a
+	 * {@link Logger} based on the current class. Is equivalent to
+	 * <tt>logger().showValue().log()</tt>.
+	 * 
+	 * @return operator that logs every <i>onNext</i> value.
+	 */
 	public static <T> OperatorLogging<T> log() {
 		return Logging.<T> logger().showValue().log();
 	}
 
+	/**
+	 * Returns a builder for which the {@link Logger} is based on the current
+	 * class (using {@link LoggerFactory#getLogger(Class)}.
+	 * 
+	 * @return builder
+	 */
 	public static <T> Parameters.Builder<T> logger() {
 		return Parameters.<T> builder().source();
 	}
 
+	/**
+	 * Returns a builder for which the {@link Logger} is based on the given name
+	 * (using {@link LoggerFactory#getLogger(String)}.
+	 * 
+	 * @return builder
+	 */
 	public static <T> Parameters.Builder<T> logger(String name) {
 		return Parameters.<T> builder().name(name);
 	}
 
+	/**
+	 * Returns a builder using the supplied {@link Logger}.
+	 * 
+	 * @return builder
+	 */
 	public static <T> Parameters.Builder<T> logger(Logger logger) {
 		return Parameters.<T> builder().logger(logger);
 	}
 
+	/**
+	 * Returns a builder for which the {@link Logger} is based on the given
+	 * class (using {@link LoggerFactory#getLogger(Class)}.
+	 * 
+	 * @return builder
+	 */
 	public static <T> Parameters.Builder<T> logger(Class<?> cls) {
 		return Parameters.<T> builder().logger(cls);
 	}
 
-	public static void log(Logger logger, String msg, Level level, Throwable t) {
+	static void log(Logger logger, String msg, Level level, Throwable t) {
 
 		if (t == null) {
 			if (level == Level.INFO)
