@@ -67,8 +67,7 @@ Note that logger for the class is automatically specified and that subscribe, un
 
 Available builder methods 
 ---------------------------
-The methods of ```logger()``` are listed [here](http://davidmoten.github.io/rxjava-slf4j/apidocs/index.html).
-
+The methods of ```logger()``` are listed [here](http://davidmoten.github.io/rxjava-slf4j/apidocs/com/github/davidmoten/rx/slf4j/Logging.Parameters.Builder.html).
 
 Composition
 -------------------------
