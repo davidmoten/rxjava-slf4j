@@ -1,7 +1,7 @@
 rxjava-slf4j
 ============
 
-Logging utilities for use with RxJava and [SLF4J](http://www.slf4j.org/) which bridges to the major popular logging frameworks.
+Logging utilities for use with [RxJava](https://github.com/Netflix/RxJava) and [SLF4J](http://www.slf4j.org/) which bridges to the major popular logging frameworks.
 
 Status: *beta, released to Maven Central*
 
