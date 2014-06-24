@@ -65,6 +65,11 @@ This is the result:
 
 Note that logger for the class is automatically specified and that subscribe, unsubscribe and completed events are all logged (by default at different log levels).
 
+Available builder methods 
+---------------------------
+The methods of ```logger()``` are listed [here](http://davidmoten.github.io/rxjava-slf4j/apidocs/index.html).
+
+
 Composition
 -------------------------
 Some methods on the ```logger()``` builder can be called repeatedly or in different orders with a compounding effect:
