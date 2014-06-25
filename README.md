@@ -20,7 +20,7 @@ Observable
   .filter(x -> x%5==0)
   .subscribe();
 ```
-We can log each step by using .doOnNext and it's pretty easy with java 8 lambdas (but awful without):
+We can log each step by using ```.doOnNext``` and it's pretty easy with java 8 lambdas (but awful without):
 ```java
 private static final Logger log = LoggerFactory.getLogger(Cls.class);
 
