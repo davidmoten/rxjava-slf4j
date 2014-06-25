@@ -9,6 +9,41 @@ Continuous integration with Jenkins for this project is [here](https://xuml-tool
 
 [Maven reports](http://davidmoten.github.io/rxjava-slf4j/) including [javadoc](http://davidmoten.github.io/rxjava-slf4j/apidocs/index.html).
 
+Logging and RxJava
+--------------------
+Suppose we have some sequence of transformations of an ```Observable``` and we want to log what is going on at each stage. For example:
+
+```java
+Observable
+  .range(1,100)
+  .map(x -> x*x+1)
+  .filter(x -> x%5==0)
+  .subscribe();
+```
+We can log each step by using .doOnNext and it's pretty easy with java 8 lambdas (but awful without):
+```java
+Observable
+  .range(1,100)
+  .doOnNext(x -> log.info("n="+ x);)
+  .map(x -> x*x+1)
+  .doOnNext(x -> log.info("n2="+ x);)
+  .filter( x -> x%5==0)
+  .doOnNext(x -> log.info("n3="+ x);)
+  .subscribe();
+```
+This library makes life *way* easier for &lt; java 8 and offers some value add for when you do have lambdas.
+
+```java
+Observable
+  .range(1,100)
+  .lift(Logging.<Integer> log("n=%s"))
+  .map(x -> x*x+1)
+  .lift(Logging.<Integer> log("n2=%s"))
+  .filter( x -> x%5==0)
+  .lift(Logging.<Integer> log("n3=%s"))
+  .subscribe();
+```
+
 Features
 --------------
 * ```source.lift(logger().cmd1().cmd2().. .log())``` is the pattern
@@ -79,8 +114,8 @@ The methods are:
 * ```finish```
 * ```showCount```
 * ```when```
-* ```onNext```
-* ```onError```
+* ```onNext(Boolean)```
+* ```onError(Boolean)```
 
 ###Repetition
 This shows every 3000th value:

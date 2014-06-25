@@ -547,6 +547,17 @@ public class Logging {
 	}
 
 	/**
+	 * Returns an {@link Operator} that logs every <i>onNext</i> value using a
+	 * {@link Logger} based on the current class. Is equivalent to
+	 * <tt>logger().showValue().log()</tt>.
+	 * 
+	 * @return operator that logs every <i>onNext</i> value.
+	 */
+	public static <T> OperatorLogging<T> log(String onNextFormat) {
+		return Logging.<T> logger().onNextFormat(onNextFormat).log();
+	}
+
+	/**
 	 * Returns a builder for which the {@link Logger} is based on the current
 	 * class (using {@link LoggerFactory#getLogger(Class)}.
 	 * 
@@ -560,7 +571,8 @@ public class Logging {
 	 * Returns a builder for which the {@link Logger} is based on the given name
 	 * (using {@link LoggerFactory#getLogger(String)}.
 	 * 
-     * @param name logger name
+	 * @param name
+	 *            logger name
 	 * @return builder
 	 */
 	public static <T> Parameters.Builder<T> logger(String name) {
@@ -570,7 +582,7 @@ public class Logging {
 	/**
 	 * Returns a builder using the supplied {@link Logger}.
 	 * 
-     * @param logger
+	 * @param logger
 	 * @return builder
 	 */
 	public static <T> Parameters.Builder<T> logger(Logger logger) {
@@ -581,7 +593,8 @@ public class Logging {
 	 * Returns a builder for which the {@link Logger} is based on the given
 	 * class (using {@link LoggerFactory#getLogger(Class)}.
 	 * 
-     * @param cls class to base the logger on 
+	 * @param cls
+	 *            class to base the logger on
 	 * @return builder
 	 */
 	public static <T> Parameters.Builder<T> logger(Class<?> cls) {

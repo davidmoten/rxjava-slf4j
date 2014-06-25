@@ -4,8 +4,11 @@ import static com.github.davidmoten.rx.slf4j.Logging.logger;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rx.Observable;
+import rx.functions.Action1;
 import rx.functions.Func1;
 
 import com.github.davidmoten.rx.slf4j.Logging.Level;
@@ -86,6 +89,61 @@ public class LoggingTest {
 								return n % 3 == 0;
 							}
 						}).showCount("divisbleBy3").onNext(false).log())
+				.subscribe();
+	}
+
+	private static final Logger log = LoggerFactory
+			.getLogger(LoggingTest.class);
+
+	@Test
+	public void testExample2() {
+		Observable.range(1, 100).map(new Func1<Integer, Integer>() {
+			@Override
+			public Integer call(Integer x) {
+				return x * x + 1;
+			}
+		}).doOnNext(new Action1<Integer>() {
+			@Override
+			public void call(Integer x) {
+				log.info("n1=" + x);
+			}
+		}).filter(new Func1<Integer, Boolean>() {
+			@Override
+			public Boolean call(Integer x) {
+				return x % 3 == 0;
+			}
+		}).doOnNext(new Action1<Integer>() {
+			@Override
+			public void call(Integer x) {
+				log.info("n1=" + x);
+			}
+		}).subscribe();
+	}
+
+	@Test
+	public void testExample2UsingLibrary() {
+		Observable
+		// range
+				.range(1, 100)
+				// map
+				.map(new Func1<Integer, Integer>() {
+					@Override
+					public Integer call(Integer x) {
+						return x * x + 1;
+					}
+				})
+				// log
+				.lift(Logging.<Integer> log("n2=%s"))
+				// filter
+				.filter(new Func1<Integer, Boolean>() {
+					@Override
+					public Boolean call(Integer x) {
+						return x % 5 == 0;
+					}
+				})
+				// log
+				.lift(Logging.log("n3=%s"))
+				// run
 				.subscribe();
 	}
 
