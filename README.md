@@ -22,6 +22,8 @@ Observable
 ```
 We can log each step by using .doOnNext and it's pretty easy with java 8 lambdas (but awful without):
 ```java
+private static final Logger log = LoggerFactory.getLogger(Cls.class);
+
 Observable
   .range(1,100)
   .doOnNext(x -> log.info("n="+ x);)
@@ -31,9 +33,26 @@ Observable
   .doOnNext(x -> log.info("n3="+ x);)
   .subscribe();
 ```
-This library makes life *way* easier for &lt; java 8 and offers some value add for when you do have lambdas.
+This library makes life *way* easier for &lt; java 8 and offers some value add for when you do have lambdas. 
 
 ```java
+import static com.github.davidmoten.rx.slf4j.Logging.log;
+
+Observable
+  .range(1,100)
+  .lift(log("n=%s"))
+  .map(x -> x*x+1)
+  .lift(log("n2=%s"))
+  .filter( x -> x%5==0)
+  .lift(log("n3=%s"))
+  .subscribe();
+```
+
+The code above won't compile in &lt; java 8 because the target type of log() is not inferred. For &lt; java 8 you need to type the log calls: 
+
+```java
+import com.github.davidmoten.rx.slf4j.Logging;
+
 Observable
   .range(1,100)
   .lift(Logging.<Integer> log("n=%s"))
