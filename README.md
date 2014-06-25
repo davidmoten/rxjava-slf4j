@@ -198,7 +198,7 @@ Observable
     .lift(Logging.<Integer>logger()
                  .showCount("total")
                  .when( x -> x%3==0)
-                 .showCount("divisbleBy3")
+                 .showCount("divisibleBy3")
                  .onNext(false)
                  .log())
     .subscribe();
@@ -206,7 +206,7 @@ Observable
 
 produces (abbreviated):
 ```
-onCompleted, total=1000, divisbleBy3=333
+onCompleted, total=1000, divisibleBy3=333
 ```
 
 Kitchen Sink Example
