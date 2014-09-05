@@ -3,6 +3,8 @@ package com.github.davidmoten.rx.slf4j;
 import static com.github.davidmoten.rx.slf4j.Logging.logger;
 import static org.junit.Assert.assertEquals;
 
+import java.text.DecimalFormat;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,11 @@ public class LoggingTest {
 				// count
 				.count().toBlocking().single();
 		assertEquals(10, count);
+	}
+
+	@Test
+	public void testDecimalFormat() {
+		assertEquals("96.1", new DecimalFormat("0.0").format(96.1));
 	}
 
 	@Test
