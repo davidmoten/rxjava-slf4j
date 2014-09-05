@@ -533,7 +533,7 @@ public class Logging {
 		s.append("MB, percentMax=");
 		s.append(new DecimalFormat("0.0").format((double) mem / r.maxMemory()
 				* 100));
-		s.append("MB, max=");
+		s.append(", max=");
 		s.append(new DecimalFormat("0").format(r.maxMemory() / 1000000.0));
 		s.append("MB");
 		return s.toString();
