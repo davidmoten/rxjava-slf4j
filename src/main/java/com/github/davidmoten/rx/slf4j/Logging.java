@@ -337,7 +337,7 @@ public class Logging {
 				return this;
 			}
 			
-			public Builder<T> showRate(final String label, final long sinceMs) {
+			public Builder<T> showRateSinceMs(final String label, final long sinceMs) {
                 observable = observable
                         .map(new Func1<Message<T>, Message<T>>() {
                             AtomicLong count = new AtomicLong(0);
@@ -359,6 +359,33 @@ public class Logging {
                                     rate = ((num-lastNum)*1000.0/diffMs);
                                     lastTime = t;
                                     lastNum = num;
+                                }
+                                return m.append(label + "=" + rate);
+                            }
+                        });
+                return this;
+            }
+			
+			public Builder<T> showRateSinceStart(final String label) {
+                observable = observable
+                        .map(new Func1<Message<T>, Message<T>>() {
+                            AtomicLong count = new AtomicLong(0);
+                            volatile long startTime = 0;
+                            volatile double rate = 0;
+
+                            @Override
+                            public Message<T> call(Message<T> m) {
+                                long t = System.currentTimeMillis();
+                                if (startTime==0) startTime = t;
+                                long num;
+                                if (m.value().isOnNext()) 
+                                    num = count.incrementAndGet();
+                                else
+                                    num =  count.get();
+                                
+                                long diffMs = t-startTime;
+                                if (diffMs>0) {
+                                    rate = num*1000.0/diffMs;
                                 }
                                 return m.append(label + "=" + rate);
                             }
