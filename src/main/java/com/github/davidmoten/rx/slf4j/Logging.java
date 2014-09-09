@@ -336,6 +336,35 @@ public class Logging {
 						});
 				return this;
 			}
+			
+			public Builder<T> showRate(final String label, final long sinceMs) {
+                observable = observable
+                        .map(new Func1<Message<T>, Message<T>>() {
+                            AtomicLong count = new AtomicLong(0);
+                            volatile long lastTime = 0;
+                            volatile long lastNum = 0;
+                            volatile double rate = 0;
+
+                            @Override
+                            public Message<T> call(Message<T> m) {
+                                long t = System.currentTimeMillis();
+                                long num;
+                                if (m.value().isOnNext()) {
+                                    num = count.incrementAndGet();
+                                }
+                                else
+                                    num =  count.get();
+                                long diffMs = t-lastTime;
+                                if (diffMs >=sinceMs) {
+                                    rate = ((num-lastNum)*1000.0/diffMs);
+                                    lastTime = t;
+                                    lastNum = num;
+                                }
+                                return m.append(label + "=" + rate);
+                            }
+                        });
+                return this;
+            }
 
 			public Builder<T> showCount() {
 				return showCount("count");
