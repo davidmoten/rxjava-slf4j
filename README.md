@@ -95,6 +95,8 @@ You will also need to add the slf4j library for your logging framework if you ar
 </dependency>
 ```
 
+And you would need a ```log4j.properties``` on the classpath. [Here's one](src/test/resources/log4j.properties).
+
 Example
 -----------
 To log every 1000th value in an observable, show the count, and show the memory usage at that point:
