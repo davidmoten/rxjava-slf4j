@@ -81,7 +81,7 @@ Add this to your pom.xml:
 <dependency>
   <groupId>com.github.davidmoten</groupId>
   <artifactId>rxjava-slf4j</artifactId>
-  <version>0.1</version>
+  <version>0.2</version>
 </dependency>
 ```
 
