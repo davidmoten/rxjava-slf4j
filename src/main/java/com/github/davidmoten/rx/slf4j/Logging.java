@@ -337,7 +337,7 @@ public class Logging {
 				return this;
 			}
 			
-			public Builder<T> showRateSinceMs(final String label, final long sinceMs) {
+			public Builder<T> showRateSince(final String label, final long sinceMs) {
                 observable = observable
                         .map(new Func1<Message<T>, Message<T>>() {
                             AtomicLong count = new AtomicLong(0);

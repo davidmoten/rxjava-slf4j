@@ -219,6 +219,10 @@ Observable.range(1, 100)
 	.lift(Logging.<Integer> logger("Boo")
 			// count
 			.showCount()
+            // show recent rate
+            .showRateSince("rate",TimeUnit.SECONDS.toMillis(10))
+            // show rate since start
+            .showRateSinceStart("rate")
 			// start on 2nd item
 			.start(2)
 			// ignore after 18th item
