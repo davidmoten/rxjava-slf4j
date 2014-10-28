@@ -81,7 +81,7 @@ Add this to your pom.xml:
 <dependency>
   <groupId>com.github.davidmoten</groupId>
   <artifactId>rxjava-slf4j</artifactId>
-  <version>0.1</version>
+  <version>0.2</version>
 </dependency>
 ```
 
@@ -94,6 +94,8 @@ You will also need to add the slf4j library for your logging framework if you ar
   <version>1.7.7</version>
 </dependency>
 ```
+
+And you would need a ```log4j.properties``` on the classpath. [Here's one](src/test/resources/log4j.properties).
 
 Example
 -----------
