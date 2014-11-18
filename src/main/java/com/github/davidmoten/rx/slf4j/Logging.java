@@ -120,8 +120,11 @@ public class Logging {
 			private Level onCompletedLevel = Level.INFO;
 			private Level subscribedLevel = Level.DEBUG;
 			private Level unsubscribedLevel = Level.DEBUG;
-			private Func1<? super T, ?> valueFunction = Functions
-					.<T> identity();
+			private Func1<? super T, ?> valueFunction = new Func1<T,T>() {
+                @Override
+                public T call(T t) {
+                    return t;
+                }};
 			private boolean logStackTrace = false;
 			private boolean logMemory = false;
 			private final PublishSubject<T> subject = PublishSubject
