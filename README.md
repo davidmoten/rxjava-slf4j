@@ -1,11 +1,10 @@
 rxjava-slf4j
 ============
+<a href="https://xuml-tools.ci.cloudbees.com/"><img src="https://xuml-tools.ci.cloudbees.com/job/rxjava-slf4j/badge/icon"/></a>
 
 Logging utilities for use with [RxJava](https://github.com/Netflix/RxJava) and [SLF4J](http://www.slf4j.org/) which bridges to the major popular logging frameworks.
 
-Status: *beta, released to Maven Central*
-
-Continuous integration with Jenkins: <a href="https://xuml-tools.ci.cloudbees.com/"><img src="https://xuml-tools.ci.cloudbees.com/job/rxjava-slf4j/badge/icon"/></a>
+Status: *released to Maven Central*
 
 [Maven reports](http://davidmoten.github.io/rxjava-slf4j/) including [javadoc](http://davidmoten.github.io/rxjava-slf4j/apidocs/index.html).
 
@@ -81,7 +80,7 @@ Add this to your pom.xml:
 <dependency>
   <groupId>com.github.davidmoten</groupId>
   <artifactId>rxjava-slf4j</artifactId>
-  <version>0.2</version>
+  <version>0.3</version>
 </dependency>
 ```
 
