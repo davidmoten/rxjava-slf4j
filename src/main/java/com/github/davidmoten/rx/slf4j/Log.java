@@ -19,7 +19,7 @@ import com.github.davidmoten.rx.Functions;
 import com.github.davidmoten.rx.slf4j.Logging.Level;
 import com.google.common.collect.EvictingQueue;
 
-public final class Logging2 {
+public final class Log {
 
 	private static final Logger DEFAULT_LOGGER = LoggerFactory
 			.getILoggerFactory().getLogger(Logging.class.getName());
@@ -29,23 +29,23 @@ public final class Logging2 {
 	}
 
 	public static <T> Builder<T> count(String prefix) {
-		return Logging2.<T> builder().count(prefix);
+		return Log.<T> builder().count(prefix);
 	}
 
 	public static <T> Builder<T> rate(String prefix, int over, TimeUnit per) {
-		return Logging2.<T> builder().rate(prefix, over, per);
+		return Log.<T> builder().rate(prefix, over, per);
 	}
 
 	public static <T> Builder<T> memory() {
-		return Logging2.<T> builder().memory();
+		return Log.<T> builder().memory();
 	}
 
 	public static <T> Builder<T> every(long every) {
-		return Logging2.<T> builder().every(every);
+		return Log.<T> builder().every(every);
 	}
 
 	public static <T> Builder<T> value(String prefix) {
-		return Logging2.<T> builder().value(prefix);
+		return Log.<T> builder().value(prefix);
 	}
 
 	public static class Builder<T> {

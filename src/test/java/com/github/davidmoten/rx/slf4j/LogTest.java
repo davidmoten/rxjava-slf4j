@@ -7,7 +7,7 @@ import org.junit.Test;
 import rx.Observable;
 import rx.functions.Action1;
 
-public class Logging2Test {
+public class LogTest {
 
 	@Test
 	public void testNoErrorsAndCompletes() {
@@ -24,7 +24,7 @@ public class Logging2Test {
 					}
 				})
 				.doOnNext(
-						Logging2.rate("msgsPerSecond=", 100, TimeUnit.SECONDS)
+						Log.rate("msgsPerSecond=", 100, TimeUnit.SECONDS)
 								.count("count=").count("n=")
 								.every(200, TimeUnit.MILLISECONDS)
 								.count("div200=").value("v=").memory().log())
