@@ -44,6 +44,10 @@ public final class Log {
 		return Log.<T> builder().every(every);
 	}
 
+	public static <T> Builder<T> every(long every, TimeUnit unit) {
+		return Log.<T> builder().every(every, unit);
+	}
+
 	public static <T> Builder<T> value(String prefix) {
 		return Log.<T> builder().value(prefix);
 	}
@@ -52,6 +56,13 @@ public final class Log {
 
 		private final List<Transition<T>> transitions = new ArrayList<Transition<T>>();
 
+		/**
+		 * Includes in the log message with a count prefixed by the given
+		 * prefix.
+		 * 
+		 * @param prefix
+		 * @return
+		 */
 		public Builder<T> count(final String prefix) {
 			final AtomicLong count = new AtomicLong();
 			Func1<Func1<T, String>, Func1<T, String>> message = chainMessage(new Func2<Func1<T, String>, T, String>() {
@@ -75,42 +86,12 @@ public final class Log {
 			return this;
 		}
 
-		private static <T> Func1<Func1<T, String>, Func1<T, String>> chainMessage(
-				final Func2<Func1<T, String>, T, String> function) {
-			return new Func1<Func1<T, String>, Func1<T, String>>() {
-
-				@Override
-				public Func1<T, String> call(final Func1<T, String> f) {
-					return new Func1<T, String>() {
-
-						@Override
-						public String call(T t) {
-							StringBuilder line = new StringBuilder(
-									function.call(f, t));
-							return appendValue(f, t, line);
-						}
-					};
-				}
-			};
-		}
-
-		private static <T> Func1<Action1<T>, Action1<T>> chainAction(
-				final Action2<Action1<T>, T> action2) {
-			return new Func1<Action1<T>, Action1<T>>() {
-
-				@Override
-				public Action1<T> call(final Action1<T> action) {
-					return new Action1<T>() {
-
-						@Override
-						public void call(T t) {
-							action2.call(action, t);
-						}
-					};
-				}
-			};
-		}
-
+		/**
+		 * Performs the succeeding log actions every N emissions.
+		 * 
+		 * @param every
+		 * @return
+		 */
 		public Builder<T> every(final long every) {
 			final AtomicLong count = new AtomicLong();
 			Func1<Func1<T, String>, Func1<T, String>> message = Functions
@@ -126,7 +107,7 @@ public final class Log {
 			return this;
 		}
 
-		public Builder<T> every(final int every, TimeUnit unit) {
+		public Builder<T> every(final long every, TimeUnit unit) {
 			final long deltaMs = unit.toMillis(every);
 			final AtomicLong nextTime = new AtomicLong(
 					System.currentTimeMillis() + deltaMs);
@@ -278,6 +259,42 @@ public final class Log {
 		s.append(new DecimalFormat("0").format(r.maxMemory() / 1000000.0));
 		s.append("MB");
 		return s.toString();
+	}
+
+	private static <T> Func1<Func1<T, String>, Func1<T, String>> chainMessage(
+			final Func2<Func1<T, String>, T, String> function) {
+		return new Func1<Func1<T, String>, Func1<T, String>>() {
+
+			@Override
+			public Func1<T, String> call(final Func1<T, String> f) {
+				return new Func1<T, String>() {
+
+					@Override
+					public String call(T t) {
+						StringBuilder line = new StringBuilder(function.call(f,
+								t));
+						return appendValue(f, t, line);
+					}
+				};
+			}
+		};
+	}
+
+	private static <T> Func1<Action1<T>, Action1<T>> chainAction(
+			final Action2<Action1<T>, T> action2) {
+		return new Func1<Action1<T>, Action1<T>>() {
+
+			@Override
+			public Action1<T> call(final Action1<T> action) {
+				return new Action1<T>() {
+
+					@Override
+					public void call(T t) {
+						action2.call(action, t);
+					}
+				};
+			}
+		};
 	}
 
 	private static <T> String appendValue(final Func1<T, String> f, T t,
