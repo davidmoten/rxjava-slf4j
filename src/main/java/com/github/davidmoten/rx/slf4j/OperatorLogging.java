@@ -17,17 +17,41 @@ import com.github.davidmoten.rx.subjects.PublishSubjectSingleSubscriber;
 
 public class OperatorLogging<T> implements Operator<T, T> {
 
-	private final Parameters<T> p;
+	private final Parameters<T> parameters;
 
 	public OperatorLogging(Parameters<T> parameters) {
-		this.p = parameters;
+		this.parameters = parameters;
 	}
 
 	@Override
 	public Subscriber<? super T> call(Subscriber<? super T> child) {
+		// create the subject and an observable from the subject that
+		// materializes the notifications from the subject
 		PublishSubjectSingleSubscriber<T> subject = PublishSubjectSingleSubscriber
 				.create();
-		Observable<Message<T>> observable = subject.materialize().map(
+		Observable<Message<T>> observable = createObservableFromSubject(subject);
+		// apply all the logging stream transformations
+		for (Func1<Observable<Message<T>>, Observable<Message<T>>> transformation : parameters
+				.getTransformations()) {
+			observable = transformation.call(observable);
+		}
+		Subscriber<T> parent = createSubscriber(subject, child);
+		Subscriber<Message<T>> logSubscriber = Subscribers.empty();
+		Subscription unsubscriptionlistener = createUnsubscriptionListener(parameters);
+		child.add(unsubscriptionlistener);
+		logSubscriber.add(unsubscriptionlistener);
+		child.add(logSubscriber);
+		observable.unsafeSubscribe(logSubscriber);
+
+		if (parameters.getSubscribedMessage() != null)
+			log(parameters.getLogger(), parameters.getSubscribedMessage(),
+					parameters.getSubscribedLevel(), null);
+		return parent;
+	}
+
+	private static <T> Observable<Message<T>> createObservableFromSubject(
+			PublishSubjectSingleSubscriber<T> subject) {
+		return subject.materialize().map(
 				new Func1<Notification<T>, Message<T>>() {
 
 					@Override
@@ -35,25 +59,10 @@ public class OperatorLogging<T> implements Operator<T, T> {
 						return new Message<T>(n, "");
 					}
 				});
-		for (Func1<Observable<Message<T>>, Observable<Message<T>>> transformation : p
-				.getTransformations()) {
-			observable = transformation.call(observable);
-		}
-		Subscriber<T> parent = createSubscriber(subject, child);
-		Subscriber<Message<T>> logSubscriber = Subscribers.empty();
-		Subscription unsubscriptionlistener = createUnsubscriptionListener();
-		child.add(unsubscriptionlistener);
-		logSubscriber.add(unsubscriptionlistener);
-		child.add(logSubscriber);
-		observable.unsafeSubscribe(logSubscriber);
-
-		if (p.getSubscribedMessage() != null)
-			log(p.getLogger(), p.getSubscribedMessage(),
-					p.getSubscribedLevel(), null);
-		return parent;
 	}
 
-	private Subscription createUnsubscriptionListener() {
+	private static <T> Subscription createUnsubscriptionListener(
+			final Parameters<T> p) {
 		return Subscriptions.create(new Action0() {
 			@Override
 			public void call() {
@@ -65,7 +74,7 @@ public class OperatorLogging<T> implements Operator<T, T> {
 		});
 	}
 
-	static <T> Subscriber<T> createSubscriber(
+	private static <T> Subscriber<T> createSubscriber(
 			final PublishSubjectSingleSubscriber<T> subject,
 			final Subscriber<? super T> child) {
 		return new Subscriber<T>(child) {
