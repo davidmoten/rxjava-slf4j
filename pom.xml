@@ -11,7 +11,7 @@
 
 	<groupId>com.github.davidmoten</groupId>
 	<artifactId>rxjava-slf4j</artifactId>
-	<version>0.4</version>
+	<version>0.5-SNAPSHOT</version>
 
 	<name>${project.artifactId}</name>
 	<description>RxJava SLF4J logging utilities</description>
@@ -78,7 +78,7 @@
 		<connection>scm:git:git@github.com:davidmoten/rxjava-slf4j.git</connection>
 		<developerConnection>scm:git:git@github.com:davidmoten/rxjava-slf4j.git</developerConnection>
 		<url>scm:git:git@github.com:davidmoten/rxjava-slf4j.git</url>
-	  <tag>0.4</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<dependencies>
