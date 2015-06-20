@@ -1,6 +1,8 @@
 package com.github.davidmoten.rx.slf4j;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
@@ -11,7 +13,6 @@ import rx.Observable;
 import rx.Observable.Operator;
 import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.subjects.PublishSubject;
 
 public class Logging {
 
@@ -29,20 +30,21 @@ public class Logging {
 		private final String unsubscribedMessage;
 		private final Level subscribedLevel;
 		private final Level unsubscribedLevel;
-		private final PublishSubject<T> subject;
-		private final Observable<Message<T>> observable;
+		private final List<Func1<Observable<Message<T>>, Observable<Message<T>>>> transformations;
 
-		private Parameters(Logger logger, String subscribedMessage,
-				String unsubscribedMessage, Level subscribedLevel,
-				Level unsubscribedLevel, PublishSubject<T> subject,
-				Observable<Message<T>> observable) {
+		private Parameters(
+				Logger logger,
+				String subscribedMessage,
+				String unsubscribedMessage,
+				Level subscribedLevel,
+				Level unsubscribedLevel,
+				List<Func1<Observable<Message<T>>, Observable<Message<T>>>> transformations) {
 			this.logger = logger;
 			this.subscribedMessage = subscribedMessage;
 			this.unsubscribedMessage = unsubscribedMessage;
 			this.subscribedLevel = subscribedLevel;
 			this.unsubscribedLevel = unsubscribedLevel;
-			this.subject = subject;
-			this.observable = observable;
+			this.transformations = transformations;
 		}
 
 		public Logger getLogger() {
@@ -65,12 +67,8 @@ public class Logging {
 			return unsubscribedLevel;
 		}
 
-		public Observable<Message<T>> getObservable() {
-			return observable;
-		}
-
-		public PublishSubject<T> getSubject() {
-			return subject;
+		public List<Func1<Observable<Message<T>>, Observable<Message<T>>>> getTransformations() {
+			return transformations;
 		}
 
 		public static <T> Builder<T> builder() {
@@ -127,16 +125,8 @@ public class Logging {
 			};
 			private boolean logStackTrace = false;
 			private boolean logMemory = false;
-			private final PublishSubject<T> subject = PublishSubject
-					.<T> create();
-			private Observable<Message<T>> observable = subject.materialize()
-					.map(new Func1<Notification<T>, Message<T>>() {
 
-						@Override
-						public Message<T> call(Notification<T> n) {
-							return new Message<T>(n, "");
-						}
-					});
+			private final List<Func1<Observable<Message<T>>, Observable<Message<T>>>> transformations = new ArrayList<Func1<Observable<Message<T>>, Observable<Message<T>>>>();
 
 			public Logger getLogger() {
 				if (logger != null)
@@ -226,12 +216,21 @@ public class Logging {
 			 * @return
 			 */
 			public Builder<T> onNext(final boolean logOnNext) {
-				this.observable = observable
-						.filter(new Func1<Message<T>, Boolean>() {
+				transformations
+						.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
 
 							@Override
-							public Boolean call(Message<T> m) {
-								return m.value().isOnNext() == logOnNext;
+							public Observable<Message<T>> call(
+									Observable<Message<T>> observable) {
+								return observable
+										.filter(new Func1<Message<T>, Boolean>() {
+
+											@Override
+											public Boolean call(Message<T> m) {
+												return m.value().isOnNext() == logOnNext;
+											}
+										});
+
 							}
 						});
 				return this;
@@ -245,12 +244,21 @@ public class Logging {
 			 * @return
 			 */
 			public Builder<T> onError(final boolean logOnError) {
-				this.observable = observable
-						.filter(new Func1<Message<T>, Boolean>() {
+				transformations
+						.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
 
 							@Override
-							public Boolean call(Message<T> m) {
-								return m.value().isOnError() == logOnError;
+							public Observable<Message<T>> call(
+									Observable<Message<T>> observable) {
+								return observable
+										.filter(new Func1<Message<T>, Boolean>() {
+
+											@Override
+											public Boolean call(Message<T> m) {
+												return m.value().isOnError() == logOnError;
+											}
+										});
+
 							}
 						});
 				return this;
@@ -322,19 +330,29 @@ public class Logging {
 			}
 
 			public Builder<T> showCount(final String label) {
-				observable = observable
-						.map(new Func1<Message<T>, Message<T>>() {
-							AtomicLong count = new AtomicLong(0);
+				transformations
+						.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
 
 							@Override
-							public Message<T> call(Message<T> m) {
-								long val;
-								if (m.value().isOnNext())
-									val = count.incrementAndGet();
-								else
-									val = count.get();
+							public Observable<Message<T>> call(
+									Observable<Message<T>> observable) {
+								return observable
+										.map(new Func1<Message<T>, Message<T>>() {
+											AtomicLong count = new AtomicLong(0);
 
-								return m.append(label + "=" + val);
+											@Override
+											public Message<T> call(Message<T> m) {
+												long val;
+												if (m.value().isOnNext())
+													val = count
+															.incrementAndGet();
+												else
+													val = count.get();
+
+												return m.append(label + "="
+														+ val);
+											}
+										});
 							}
 						});
 				return this;
@@ -342,56 +360,79 @@ public class Logging {
 
 			public Builder<T> showRateSince(final String label,
 					final long sinceMs) {
-				observable = observable
-						.map(new Func1<Message<T>, Message<T>>() {
-							AtomicLong count = new AtomicLong(0);
-							volatile long lastTime = 0;
-							volatile long lastNum = 0;
-							volatile double rate = 0;
+				transformations
+						.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
 
 							@Override
-							public Message<T> call(Message<T> m) {
-								long t = System.currentTimeMillis();
-								long num;
-								if (m.value().isOnNext()) {
-									num = count.incrementAndGet();
-								} else
-									num = count.get();
-								long diffMs = t - lastTime;
-								if (diffMs >= sinceMs) {
-									rate = ((num - lastNum) * 1000.0 / diffMs);
-									lastTime = t;
-									lastNum = num;
-								}
-								return m.append(label + "=" + rate);
+							public Observable<Message<T>> call(
+									Observable<Message<T>> observable) {
+								return observable
+										.map(new Func1<Message<T>, Message<T>>() {
+											AtomicLong count = new AtomicLong(0);
+											volatile long lastTime = 0;
+											volatile long lastNum = 0;
+											volatile double rate = 0;
+
+											@Override
+											public Message<T> call(Message<T> m) {
+												long t = System
+														.currentTimeMillis();
+												long num;
+												if (m.value().isOnNext()) {
+													num = count
+															.incrementAndGet();
+												} else
+													num = count.get();
+												long diffMs = t - lastTime;
+												if (diffMs >= sinceMs) {
+													rate = ((num - lastNum) * 1000.0 / diffMs);
+													lastTime = t;
+													lastNum = num;
+												}
+												return m.append(label + "="
+														+ rate);
+											}
+										});
 							}
 						});
 				return this;
 			}
 
 			public Builder<T> showRateSinceStart(final String label) {
-				observable = observable
-						.map(new Func1<Message<T>, Message<T>>() {
-							AtomicLong count = new AtomicLong(0);
-							volatile long startTime = 0;
-							volatile double rate = 0;
+				transformations
+						.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
 
 							@Override
-							public Message<T> call(Message<T> m) {
-								long t = System.currentTimeMillis();
-								if (startTime == 0)
-									startTime = t;
-								long num;
-								if (m.value().isOnNext())
-									num = count.incrementAndGet();
-								else
-									num = count.get();
+							public Observable<Message<T>> call(
+									Observable<Message<T>> observable) {
+								return observable
+										.map(new Func1<Message<T>, Message<T>>() {
+											AtomicLong count = new AtomicLong(0);
+											volatile long startTime = 0;
+											volatile double rate = 0;
 
-								long diffMs = t - startTime;
-								if (diffMs > 0) {
-									rate = num * 1000.0 / diffMs;
-								}
-								return m.append(label + "=" + rate);
+											@Override
+											public Message<T> call(Message<T> m) {
+												long t = System
+														.currentTimeMillis();
+												if (startTime == 0)
+													startTime = t;
+												long num;
+												if (m.value().isOnNext())
+													num = count
+															.incrementAndGet();
+												else
+													num = count.get();
+
+												long diffMs = t - startTime;
+												if (diffMs > 0) {
+													rate = num * 1000.0
+															/ diffMs;
+												}
+												return m.append(label + "="
+														+ rate);
+											}
+										});
 							}
 						});
 				return this;
@@ -402,19 +443,31 @@ public class Logging {
 			}
 
 			public Builder<T> every(final int every) {
-				if (every > 1)
-					observable = observable
-							.filter(new Func1<Message<T>, Boolean>() {
-								AtomicLong count = new AtomicLong(0);
+				if (every > 1) {
+					transformations
+							.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
 
 								@Override
-								public Boolean call(Message<T> t) {
-									if (t.value().isOnNext())
-										return count.incrementAndGet() % every == 0;
-									else
-										return true;
+								public Observable<Message<T>> call(
+										Observable<Message<T>> observable) {
+									return observable
+											.filter(new Func1<Message<T>, Boolean>() {
+												AtomicLong count = new AtomicLong(
+														0);
+
+												@Override
+												public Boolean call(Message<T> t) {
+													if (t.value().isOnNext())
+														return count
+																.incrementAndGet()
+																% every == 0;
+													else
+														return true;
+												}
+											});
 								}
 							});
+				}
 				return this;
 			}
 
@@ -447,54 +500,89 @@ public class Logging {
 			}
 
 			public Builder<T> when(final Func1<? super T, Boolean> when) {
-				observable = observable
-						.filter(new Func1<Message<T>, Boolean>() {
+				transformations
+						.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
+
 							@Override
-							public Boolean call(Message<T> t) {
-								if (t.value().isOnNext())
-									return when.call(t.value().getValue());
-								else
-									return true;
+							public Observable<Message<T>> call(
+									Observable<Message<T>> observable) {
+								return observable
+										.filter(new Func1<Message<T>, Boolean>() {
+											@Override
+											public Boolean call(Message<T> t) {
+												if (t.value().isOnNext())
+													return when.call(t.value()
+															.getValue());
+												else
+													return true;
+											}
+										});
 							}
 						});
 				return this;
 			}
 
 			public Builder<T> start(final long start) {
-				observable = observable
-						.filter(new Func1<Message<T>, Boolean>() {
-							AtomicLong count = new AtomicLong(0);
+				transformations
+						.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
 
 							@Override
-							public Boolean call(Message<T> t) {
-								if (t.value().isOnNext())
-									return start <= count.incrementAndGet();
-								else
-									return true;
+							public Observable<Message<T>> call(
+									Observable<Message<T>> observable) {
+								return observable
+										.filter(new Func1<Message<T>, Boolean>() {
+											AtomicLong count = new AtomicLong(0);
+
+											@Override
+											public Boolean call(Message<T> t) {
+												if (t.value().isOnNext())
+													return start <= count
+															.incrementAndGet();
+												else
+													return true;
+											}
+										});
 							}
 						});
 				return this;
 			}
 
 			public Builder<T> finish(final long finish) {
-				observable = observable
-						.filter(new Func1<Message<T>, Boolean>() {
-							AtomicLong count = new AtomicLong(0);
+				transformations
+						.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
 
 							@Override
-							public Boolean call(Message<T> t) {
-								if (t.value().isOnNext())
-									return finish >= count.incrementAndGet();
-								else
-									return true;
+							public Observable<Message<T>> call(
+									Observable<Message<T>> observable) {
+								return observable
+										.filter(new Func1<Message<T>, Boolean>() {
+											AtomicLong count = new AtomicLong(0);
+
+											@Override
+											public Boolean call(Message<T> t) {
+												if (t.value().isOnNext())
+													return finish >= count
+															.incrementAndGet();
+												else
+													return true;
+											}
+										});
 							}
 						});
 				return this;
 			}
 
 			public Builder<T> to(
-					Func1<Observable<? super Message<T>>, Observable<Message<T>>> f) {
-				this.observable = f.call(observable);
+					final Func1<Observable<? super Message<T>>, Observable<Message<T>>> f) {
+				transformations
+						.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
+
+							@Override
+							public Observable<Message<T>> call(
+									Observable<Message<T>> observable) {
+								return f.call(observable);
+							}
+						});
 				return this;
 			}
 
@@ -504,10 +592,18 @@ public class Logging {
 			}
 
 			public OperatorLogging<T> log() {
+				transformations
+						.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
+
+							@Override
+							public Observable<Message<T>> call(
+									Observable<Message<T>> observable) {
+								return observable.doOnNext(log);
+							}
+						});
 				return new OperatorLogging<T>(new Parameters<T>(getLogger(),
 						subscribedMessage, unsubscribedMessage,
-						subscribedLevel, unsubscribedLevel, subject,
-						observable.doOnNext(log)));
+						subscribedLevel, unsubscribedLevel, transformations));
 			}
 
 			private Builder<T> source() {
