@@ -11,7 +11,6 @@ import rx.Observable;
 import rx.Observable.Operator;
 import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.functions.Functions;
 import rx.subjects.PublishSubject;
 
 public class Logging {
@@ -120,11 +119,12 @@ public class Logging {
 			private Level onCompletedLevel = Level.INFO;
 			private Level subscribedLevel = Level.DEBUG;
 			private Level unsubscribedLevel = Level.DEBUG;
-			private Func1<? super T, ?> valueFunction = new Func1<T,T>() {
-                @Override
-                public T call(T t) {
-                    return t;
-                }};
+			private Func1<? super T, ?> valueFunction = new Func1<T, T>() {
+				@Override
+				public T call(T t) {
+					return t;
+				}
+			};
 			private boolean logStackTrace = false;
 			private boolean logMemory = false;
 			private final PublishSubject<T> subject = PublishSubject
@@ -339,62 +339,63 @@ public class Logging {
 						});
 				return this;
 			}
-			
-			public Builder<T> showRateSince(final String label, final long sinceMs) {
-                observable = observable
-                        .map(new Func1<Message<T>, Message<T>>() {
-                            AtomicLong count = new AtomicLong(0);
-                            volatile long lastTime = 0;
-                            volatile long lastNum = 0;
-                            volatile double rate = 0;
 
-                            @Override
-                            public Message<T> call(Message<T> m) {
-                                long t = System.currentTimeMillis();
-                                long num;
-                                if (m.value().isOnNext()) {
-                                    num = count.incrementAndGet();
-                                }
-                                else
-                                    num =  count.get();
-                                long diffMs = t-lastTime;
-                                if (diffMs >=sinceMs) {
-                                    rate = ((num-lastNum)*1000.0/diffMs);
-                                    lastTime = t;
-                                    lastNum = num;
-                                }
-                                return m.append(label + "=" + rate);
-                            }
-                        });
-                return this;
-            }
-			
+			public Builder<T> showRateSince(final String label,
+					final long sinceMs) {
+				observable = observable
+						.map(new Func1<Message<T>, Message<T>>() {
+							AtomicLong count = new AtomicLong(0);
+							volatile long lastTime = 0;
+							volatile long lastNum = 0;
+							volatile double rate = 0;
+
+							@Override
+							public Message<T> call(Message<T> m) {
+								long t = System.currentTimeMillis();
+								long num;
+								if (m.value().isOnNext()) {
+									num = count.incrementAndGet();
+								} else
+									num = count.get();
+								long diffMs = t - lastTime;
+								if (diffMs >= sinceMs) {
+									rate = ((num - lastNum) * 1000.0 / diffMs);
+									lastTime = t;
+									lastNum = num;
+								}
+								return m.append(label + "=" + rate);
+							}
+						});
+				return this;
+			}
+
 			public Builder<T> showRateSinceStart(final String label) {
-                observable = observable
-                        .map(new Func1<Message<T>, Message<T>>() {
-                            AtomicLong count = new AtomicLong(0);
-                            volatile long startTime = 0;
-                            volatile double rate = 0;
+				observable = observable
+						.map(new Func1<Message<T>, Message<T>>() {
+							AtomicLong count = new AtomicLong(0);
+							volatile long startTime = 0;
+							volatile double rate = 0;
 
-                            @Override
-                            public Message<T> call(Message<T> m) {
-                                long t = System.currentTimeMillis();
-                                if (startTime==0) startTime = t;
-                                long num;
-                                if (m.value().isOnNext()) 
-                                    num = count.incrementAndGet();
-                                else
-                                    num =  count.get();
-                                
-                                long diffMs = t-startTime;
-                                if (diffMs>0) {
-                                    rate = num*1000.0/diffMs;
-                                }
-                                return m.append(label + "=" + rate);
-                            }
-                        });
-                return this;
-            }
+							@Override
+							public Message<T> call(Message<T> m) {
+								long t = System.currentTimeMillis();
+								if (startTime == 0)
+									startTime = t;
+								long num;
+								if (m.value().isOnNext())
+									num = count.incrementAndGet();
+								else
+									num = count.get();
+
+								long diffMs = t - startTime;
+								if (diffMs > 0) {
+									rate = num * 1000.0 / diffMs;
+								}
+								return m.append(label + "=" + rate);
+							}
+						});
+				return this;
+			}
 
 			public Builder<T> showCount() {
 				return showCount("count");
