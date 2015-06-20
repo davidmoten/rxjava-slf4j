@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>com.github.davidmoten</groupId>
-        <artifactId>sonatype-parent</artifactId>
-        <version>0.1</version>
-    </parent>
+	<parent>
+		<groupId>com.github.davidmoten</groupId>
+		<artifactId>sonatype-parent</artifactId>
+		<version>0.1</version>
+	</parent>
 
 	<groupId>com.github.davidmoten</groupId>
 	<artifactId>rxjava-slf4j</artifactId>
@@ -78,8 +79,8 @@
 		<connection>scm:git:git@github.com:davidmoten/rxjava-slf4j.git</connection>
 		<developerConnection>scm:git:git@github.com:davidmoten/rxjava-slf4j.git</developerConnection>
 		<url>scm:git:git@github.com:davidmoten/rxjava-slf4j.git</url>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<dependencies>
 		<dependency>
@@ -108,7 +109,12 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>1.10.19</version>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
