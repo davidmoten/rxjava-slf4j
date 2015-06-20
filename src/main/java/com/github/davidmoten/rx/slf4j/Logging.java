@@ -125,16 +125,6 @@ public class Logging {
 			};
 			private boolean logStackTrace = false;
 			private boolean logMemory = false;
-			// private final PublishSubject<T> subject = PublishSubject
-			// .<T> create();
-			// private Observable<Message<T>> observable = subject.materialize()
-			// .map(new Func1<Notification<T>, Message<T>>() {
-			//
-			// @Override
-			// public Message<T> call(Notification<T> n) {
-			// return new Message<T>(n, "");
-			// }
-			// });
 
 			private final List<Func1<Observable<Message<T>>, Observable<Message<T>>>> transformations = new ArrayList<Func1<Observable<Message<T>>, Observable<Message<T>>>>();
 
