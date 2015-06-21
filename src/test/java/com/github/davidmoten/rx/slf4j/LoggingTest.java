@@ -2,13 +2,13 @@ package com.github.davidmoten.rx.slf4j;
 
 import static com.github.davidmoten.rx.slf4j.Logging.logger;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.text.DecimalFormat;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +22,7 @@ public class LoggingTest {
 
 	@Test
 	public void testName() {
-		Logger logger = Mockito.mock(Logger.class);
+		Logger logger = mock(Logger.class);
 		int count = Observable.range(1, 3)
 		// log all
 				.lift(logger(logger).showValue().log())
@@ -45,7 +45,7 @@ public class LoggingTest {
 
 	@Test
 	public void testCountEvery() {
-		Logger logger = Mockito.mock(Logger.class);
+		Logger logger = mock(Logger.class);
 		// TODO because of mock rx.Server logger name not used
 		int count = Observable
 				.range(1, 6)
@@ -68,7 +68,7 @@ public class LoggingTest {
 
 	@Test
 	public void testLoggingTransformationErrorIsLogged() {
-		Logger logger = Mockito.mock(Logger.class);
+		Logger logger = mock(Logger.class);
 		final IllegalArgumentException exception = new IllegalArgumentException(
 				"problem");
 		Observable
