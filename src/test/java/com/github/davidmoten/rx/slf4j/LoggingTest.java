@@ -2,6 +2,8 @@ package com.github.davidmoten.rx.slf4j;
 
 import static com.github.davidmoten.rx.slf4j.Logging.logger;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.text.DecimalFormat;
 
@@ -20,12 +22,20 @@ public class LoggingTest {
 
     @Test
     public void testName() {
-        int count = Observable.range(1, 10)
+        Logger logger = Mockito.mock(Logger.class);
+        int count = Observable.range(1, 3)
         // log all
-                .lift(logger(LoggingTest.class).showValue().log())
+                .lift(logger(logger).showValue().log())
                 // count
                 .count().toBlocking().single();
-        assertEquals(10, count);
+        assertEquals(3, count);
+        verify(logger).debug("onSubscribe");
+        verify(logger).info("1");
+        verify(logger).info("2");
+        verify(logger).info("3");
+        verify(logger).info("onCompleted");
+        verify(logger).debug("onUnsubscribe");
+        verifyNoMoreInteractions(logger);
     }
 
     @Test
@@ -46,13 +56,13 @@ public class LoggingTest {
                 // count
                 .count().toBlocking().single();
         assertEquals(6, count);
-        Mockito.verify(logger).debug("onSubscribe");
-        Mockito.verify(logger).info("files=2");
-        Mockito.verify(logger).info("files=4");
-        Mockito.verify(logger).info("files=6");
-        Mockito.verify(logger).debug("onCompleted, files=6");
-        Mockito.verify(logger).debug("onUnsubscribe");
-        Mockito.verifyNoMoreInteractions(logger);
+        verify(logger).debug("onSubscribe");
+        verify(logger).info("files=2");
+        verify(logger).info("files=4");
+        verify(logger).info("files=6");
+        verify(logger).debug("onCompleted, files=6");
+        verify(logger).debug("onUnsubscribe");
+        verifyNoMoreInteractions(logger);
     }
 
     @Test
