@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.text.DecimalFormat;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.observers.TestSubscriber;
 
 import com.github.davidmoten.rx.slf4j.Logging.Level;
 
@@ -63,6 +65,24 @@ public class LoggingTest {
         verify(logger).debug("onCompleted, files=6");
         verify(logger).debug("onUnsubscribe");
         verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    public void testBackpressurePassedThrough() {
+        final AtomicLong requests = new AtomicLong();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>(0);
+        Observable.range(1, 5).doOnRequest(new Action1<Long>() {
+
+            @Override
+            public void call(Long n) {
+                requests.addAndGet(n);
+            }
+        }).lift(Logging.<Integer> log()).subscribe(ts);
+        assertEquals(0, requests.get());
+        ts.requestMore(1);
+        assertEquals(1, requests.get());
+        ts.requestMore(2);
+        assertEquals(3, requests.get());
     }
 
     @Test
