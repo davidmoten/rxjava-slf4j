@@ -1,0 +1,31 @@
+package com.github.davidmoten.rx.testing;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import rx.Observable;
+import rx.functions.Func1;
+
+import com.github.davidmoten.rx.slf4j.Logging;
+
+public class LoggingHelperTest extends TestCase {
+
+    public static TestSuite suite() {
+        return TestingHelper.function(LOGGER)
+        // test empty
+                .name("testLogger").from(1, 2, 3).expect(1, 2, 3)
+                // get test suites
+                .testSuite(LoggingHelperTest.class);
+    }
+
+    public void testDummy() {
+        // just here to fool eclipse
+    }
+
+    private static final Func1<Observable<Integer>, Observable<Integer>> LOGGER = new Func1<Observable<Integer>, Observable<Integer>>() {
+        @Override
+        public Observable<Integer> call(Observable<Integer> o) {
+            return o.lift(Logging.<Integer> logger().showValue().log());
+        }
+    };
+
+}
