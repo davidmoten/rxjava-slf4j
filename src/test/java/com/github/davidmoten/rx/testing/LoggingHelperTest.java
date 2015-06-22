@@ -11,8 +11,12 @@ public class LoggingHelperTest extends TestCase {
 
     public static TestSuite suite() {
         return TestingHelper.function(LOGGER)
-        // test empty
+        // test logger
                 .name("testLogger").from(1, 2, 3).expect(1, 2, 3)
+                // test empty
+                .name("testLoggerOnEmptyStream").fromEmpty().expectEmpty()
+                // test error
+                .name("testLoggerOnErrorStream").fromError().expectError()
                 // get test suites
                 .testSuite(LoggingHelperTest.class);
     }
