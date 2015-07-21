@@ -3,6 +3,7 @@ package com.github.davidmoten.rx.slf4j;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
@@ -351,13 +352,22 @@ public class Logging {
                 return this;
             }
 
+            public Builder<T> showCount() {
+                return showCount("count");
+            }
+
             public Builder<T> showRateSince(final String label, final long sinceMs) {
+                return showRateSince(label, sinceMs, null);
+            }
+
+            public Builder<T> showRateSince(final String label, final long sinceMs,
+                    final AtomicLong count) {
                 transformations.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
 
                     @Override
                     public Observable<Message<T>> call(Observable<Message<T>> observable) {
                         return observable.map(new Func1<Message<T>, Message<T>>() {
-                            AtomicLong count = new AtomicLong(0);
+                            final AtomicLong c = count == null ? new AtomicLong(0) : count;
                             volatile long lastTime = 0;
                             volatile long lastNum = 0;
                             volatile double rate = 0;
@@ -367,9 +377,9 @@ public class Logging {
                                 long t = System.currentTimeMillis();
                                 long num;
                                 if (m.value().isOnNext()) {
-                                    num = count.incrementAndGet();
+                                    num = c.incrementAndGet();
                                 } else
-                                    num = count.get();
+                                    num = c.get();
                                 long diffMs = t - lastTime;
                                 if (diffMs >= sinceMs) {
                                     rate = ((num - lastNum) * 1000.0 / diffMs);
@@ -385,12 +395,16 @@ public class Logging {
             }
 
             public Builder<T> showRateSinceStart(final String label) {
+                return showRateSinceStart(label, null);
+            }
+
+            public Builder<T> showRateSinceStart(final String label, final AtomicLong count) {
                 transformations.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
 
                     @Override
                     public Observable<Message<T>> call(Observable<Message<T>> observable) {
                         return observable.map(new Func1<Message<T>, Message<T>>() {
-                            AtomicLong count = new AtomicLong(0);
+                            final AtomicLong c = count == null ? new AtomicLong(0) : count;
                             volatile long startTime = 0;
                             volatile double rate = 0;
 
@@ -401,9 +415,9 @@ public class Logging {
                                     startTime = t;
                                 long num;
                                 if (m.value().isOnNext())
-                                    num = count.incrementAndGet();
+                                    num = c.incrementAndGet();
                                 else
-                                    num = count.get();
+                                    num = c.get();
 
                                 long diffMs = t - startTime;
                                 if (diffMs > 0) {
@@ -417,11 +431,38 @@ public class Logging {
                 return this;
             }
 
-            public Builder<T> showCount() {
-                return showCount("count");
+            public Builder<T> every(final int every) {
+                return every(every, (AtomicLong) null);
             }
 
-            public Builder<T> every(final int every) {
+            public Builder<T> every(long duration, TimeUnit unit) {
+                if (duration > 1) {
+                    final long durationMs = unit.toMillis(duration);
+                    transformations
+                            .add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
+
+                                @Override
+                                public Observable<Message<T>> call(Observable<Message<T>> observable) {
+                                    return observable.filter(new Func1<Message<T>, Boolean>() {
+                                        long lastTime = 0;
+
+                                        @Override
+                                        public Boolean call(Message<T> t) {
+                                            long now = System.currentTimeMillis();
+                                            if (now - lastTime > durationMs) {
+                                                lastTime = now;
+                                                return true;
+                                            } else
+                                                return false;
+                                        }
+                                    });
+                                }
+                            });
+                }
+                return this;
+            }
+
+            public Builder<T> every(final int every, final AtomicLong count) {
                 if (every > 1) {
                     transformations
                             .add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
@@ -429,12 +470,13 @@ public class Logging {
                                 @Override
                                 public Observable<Message<T>> call(Observable<Message<T>> observable) {
                                     return observable.filter(new Func1<Message<T>, Boolean>() {
-                                        AtomicLong count = new AtomicLong(0);
+                                        final AtomicLong c = count == null ? new AtomicLong(0)
+                                                : count;
 
                                         @Override
                                         public Boolean call(Message<T> t) {
                                             if (t.value().isOnNext())
-                                                return count.incrementAndGet() % every == 0;
+                                                return c.incrementAndGet() % every == 0;
                                             else
                                                 return true;
                                         }
