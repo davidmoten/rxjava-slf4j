@@ -436,7 +436,7 @@ public class Logging {
             }
 
             public Builder<T> every(long duration, TimeUnit unit) {
-                if (duration > 1) {
+                if (duration > 0) {
                     final long durationMs = unit.toMillis(duration);
                     transformations
                             .add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
