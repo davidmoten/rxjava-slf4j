@@ -24,6 +24,7 @@
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<slf4j.version>1.7.7</slf4j.version>
 		<guava.version>18.0</guava.version>
+
         <scm.url>scm:git:https://github.com/davidmoten/rxjava-slf4j.git</scm.url>
 
 		<cobertura.version>2.6</cobertura.version>
