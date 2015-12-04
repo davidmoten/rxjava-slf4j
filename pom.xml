@@ -79,7 +79,7 @@
 		<connection>${scm.url}</connection>
 		<developerConnection>${scm.url}</developerConnection>
 		<url>${scm.url}</url>
-		<tag>HEAD</tag>
+		<tag>0.5</tag>
 	</scm>
 
 	<dependencies>
