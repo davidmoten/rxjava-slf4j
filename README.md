@@ -12,6 +12,14 @@ Status: *released to Maven Central*
 
 Logging and RxJava
 --------------------
+As a quick example my favourite use case is to have a window into a fast moving stream of the number of items processesd and memory consumption:
+
+```java
+observable
+    .lift(Logging.logger().showCount().showMemory().every(100000).log())
+    .subscribe(subscriber);
+```
+
 Suppose we have some sequence of transformations of an ```Observable``` and we want to log what is going on at each stage. For example:
 
 ```java
