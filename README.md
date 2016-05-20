@@ -35,7 +35,7 @@ Add this to your pom.xml:
 <dependency>
   <groupId>com.github.davidmoten</groupId>
   <artifactId>rxjava-slf4j</artifactId>
-  <version>0.5.4</version>
+  <version>0.5.5</version>
 </dependency>
 ```
 
