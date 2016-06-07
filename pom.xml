@@ -90,16 +90,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
-			<optional>true</optional>
-		</dependency>
-
-		<dependency>
 			<groupId>com.github.davidmoten</groupId>
 			<artifactId>rxjava-extras</artifactId>
-			<version>0.7.7</version>
+			<version>0.7.9.4</version>
 		</dependency>
 
 		<!-- Test Dependencies -->
