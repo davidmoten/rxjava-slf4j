@@ -4,16 +4,16 @@ import static com.github.davidmoten.rx.slf4j.Logging.log;
 
 import org.slf4j.Logger;
 
+import com.github.davidmoten.rx.slf4j.Logging.Parameters;
+import com.github.davidmoten.rx.slf4j.Logging.Parameters.Message;
+import com.github.davidmoten.rx.subjects.PublishSubjectSingleSubscriber;
+
 import rx.Notification;
 import rx.Observable;
 import rx.Observable.Operator;
 import rx.Subscriber;
 import rx.functions.Action0;
 import rx.functions.Func1;
-
-import com.github.davidmoten.rx.slf4j.Logging.Parameters;
-import com.github.davidmoten.rx.slf4j.Logging.Parameters.Message;
-import com.github.davidmoten.rx.subjects.PublishSubjectSingleSubscriber;
 
 public class OperatorLogging<T> implements Operator<T, T> {
 
@@ -41,10 +41,10 @@ public class OperatorLogging<T> implements Operator<T, T> {
         Action0 unsubscriptionLogger = createUnsubscriptionAction(parameters);
         Action0 subscriptionLogger = createSubscriptionAction(parameters);
         observable = observable
-        // add subscription action
-                .lift(new OperatorDoOnSubscribe<Message<T>>(subscriptionLogger))
+                // add subscription action
+                .doOnSubscribe(subscriptionLogger)
                 // add unsubscription action
-                .lift(new OperatorDoOnUnsubscribe<Message<T>>(unsubscriptionLogger));
+                .doOnUnsubscribe(unsubscriptionLogger);
 
         // create parent subscriber
         Subscriber<T> parent = createParentSubscriber(subject, child);
