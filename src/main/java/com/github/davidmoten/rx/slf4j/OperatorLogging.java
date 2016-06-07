@@ -71,7 +71,7 @@ public class OperatorLogging<T> implements Operator<T, T> {
 
             @Override
             public void onError(Throwable e) {
-                logger.error("the logging transformations through an exception: " + e.getMessage(),
+                logger.error("the logging transformations threw an exception: " + e.getMessage(),
                         e);
             }
 
