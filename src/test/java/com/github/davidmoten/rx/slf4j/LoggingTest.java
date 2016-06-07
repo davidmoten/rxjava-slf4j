@@ -83,7 +83,7 @@ public class LoggingTest {
                         }).log()).subscribe();
         verify(logger).debug("onSubscribe");
         verify(logger)
-                .error("the logging transformations through an exception: problem", exception);
+                .error("the logging transformations threw an exception: problem", exception);
         verify(logger).debug("onUnsubscribe");
         verifyNoMoreInteractions(logger);
 
