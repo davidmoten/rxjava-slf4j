@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>rxjava-slf4j</artifactId>
-    <version>0.6.10</version>
+    <version>0.6.11-SNAPSHOT</version>
 
     <name>${project.artifactId}</name>
     <description>RxJava SLF4J logging utilities</description>
@@ -79,7 +79,7 @@
         <connection>${scm.url}</connection>
         <developerConnection>${scm.url}</developerConnection>
         <url>${scm.url}</url>
-        <tag>0.6.10</tag>
+        <tag>0.5</tag>
     </scm>
 
     <dependencies>
