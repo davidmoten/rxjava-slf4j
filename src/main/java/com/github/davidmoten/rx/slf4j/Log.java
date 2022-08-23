@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.davidmoten.rx.Functions;
 import com.github.davidmoten.rx.slf4j.Logging.Level;
 
 import rx.functions.Action1;
@@ -95,7 +94,7 @@ public final class Log {
          */
         public Builder<T> every(final long every) {
             final AtomicLong count = new AtomicLong();
-            Func1<Func1<T, String>, Func1<T, String>> message = Functions.identity();
+            Func1<Func1<T, String>, Func1<T, String>> message = identity();
             Func1<Action1<T>, Action1<T>> action = chainAction(new Action2<Action1<T>, T>() {
                 @Override
                 public void call(Action1<T> action, T t) {
@@ -110,7 +109,7 @@ public final class Log {
         public Builder<T> every(final long every, TimeUnit unit) {
             final long deltaMs = unit.toMillis(every);
             final AtomicLong nextTime = new AtomicLong(System.currentTimeMillis() + deltaMs);
-            Func1<Func1<T, String>, Func1<T, String>> message = Functions.identity();
+            Func1<Func1<T, String>, Func1<T, String>> message = identity();
             Func1<Action1<T>, Action1<T>> action = chainAction(new Action2<Action1<T>, T>() {
                 @Override
                 public void call(Action1<T> action, T t) {
@@ -137,7 +136,7 @@ public final class Log {
                         }
 
                     });
-            Func1<Action1<T>, Action1<T>> action = Functions.identity();
+            Func1<Action1<T>, Action1<T>> action = identity();
             transitions.add(new Transition<T>(action, message));
             return this;
         }
@@ -150,7 +149,7 @@ public final class Log {
                             return memoryUsage();
                         }
                     });
-            Func1<Action1<T>, Action1<T>> action = Functions.identity();
+            Func1<Action1<T>, Action1<T>> action = identity();
             transitions.add(new Transition<T>(action, message));
             return this;
         }
@@ -305,6 +304,15 @@ public final class Log {
             line.append(value);
         }
         return line.toString();
+    }
+    
+    static <T> Func1<T, T> identity() {
+        return new Func1<T, T>() {
+            @Override
+            public T call(T t) {
+                return t;
+            }
+        };
     }
 
 }

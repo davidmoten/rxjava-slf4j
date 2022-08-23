@@ -1,11 +1,11 @@
 package com.github.davidmoten.rx.testing;
 
+import com.github.davidmoten.rx.slf4j.Logging;
+
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import rx.Observable;
 import rx.functions.Func1;
-
-import com.github.davidmoten.rx.slf4j.Logging;
 
 public class LoggingHelperTest extends TestCase {
 

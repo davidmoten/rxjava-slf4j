@@ -13,12 +13,12 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.davidmoten.rx.slf4j.Logging.Level;
+
 import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.observers.TestSubscriber;
-
-import com.github.davidmoten.rx.slf4j.Logging.Level;
 
 public class LoggingTest {
 

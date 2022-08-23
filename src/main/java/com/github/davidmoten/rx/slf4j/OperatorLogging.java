@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 
 import com.github.davidmoten.rx.slf4j.Logging.Parameters;
 import com.github.davidmoten.rx.slf4j.Logging.Parameters.Message;
-import com.github.davidmoten.rx.subjects.PublishSubjectSingleSubscriber;
+import com.github.davidmoten.rx.slf4j.subjects.PublishSubjectSingleSubscriber;
 
 import rx.Notification;
 import rx.Observable;
