@@ -22,8 +22,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.target>1.6</maven.compiler.target>
-        <slf4j.version>1.7.7</slf4j.version>
-        <guava.version>18.0</guava.version>
+        <slf4j.version>1.7.36</slf4j.version>
 
         <scm.url>scm:git:https://github.com/davidmoten/rxjava-slf4j.git</scm.url>
 
