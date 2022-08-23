@@ -105,8 +105,8 @@ public class Logging {
             private String onCompleteMessage = "onCompleted";
             private String subscribedMessage = "onSubscribe";
             private String unsubscribedMessage = "onUnsubscribe";
-            private final boolean logOnNext = true;
-            private final boolean logOnError = true;
+            private boolean logOnNext = true;
+            private boolean logOnError = true;
             private String onErrorFormat = "";
             private String onNextFormat = "";
             private Level onNextLevel = Level.INFO;
@@ -213,6 +213,7 @@ public class Logging {
              * @return
              */
             public Builder<T> onNext(final boolean logOnNext) {
+                this.logOnNext = logOnNext;
                 transformations.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
 
                     @Override
@@ -238,6 +239,7 @@ public class Logging {
              * @return
              */
             public Builder<T> onError(final boolean logOnError) {
+                this.logOnError = logOnError;
                 transformations.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
 
                     @Override
