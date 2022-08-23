@@ -92,7 +92,7 @@
             <groupId>com.github.davidmoten</groupId>
             <artifactId>rxjava-extras</artifactId>
             <version>0.8.0.19</version>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
 
         <!-- Test Dependencies -->
