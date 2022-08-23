@@ -2,7 +2,6 @@ rxjava-slf4j
 ============
 <a href="https://github.com/davidmoten/rxjava-slf4j/actions/workflows/ci.yml"><img src="https://github.com/davidmoten/rxjava-slf4j/actions/workflows/ci.yml/badge.svg"/></a><br/>
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.davidmoten/rxjava-slf4j-runtime/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/com.github.davidmoten/rxjava-slf4j)<br/>
-[![Dependency Status](https://gemnasium.com/com.github.davidmoten/rxjava-slf4j.svg)](https://gemnasium.com/com.github.davidmoten/rxjava-slf4j)
 
 Logging utilities for use with [RxJava](https://github.com/Netflix/RxJava) and [SLF4J](http://www.slf4j.org/) which bridges to the major popular logging frameworks.
 
