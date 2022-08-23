@@ -384,7 +384,7 @@ public class Logging {
                                     num = c.get();
                                 long diffMs = t - lastTime;
                                 if (diffMs >= sinceMs) {
-                                    rate = ((num - lastNum) * 1000.0 / diffMs);
+                                    rate = (num - lastNum) * 1000.0 / diffMs;
                                     lastTime = t;
                                     lastNum = num;
                                 }
