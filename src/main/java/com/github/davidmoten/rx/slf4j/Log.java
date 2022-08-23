@@ -146,7 +146,7 @@ public final class Log {
                     new Func2<Func1<T, String>, T, String>() {
                         @Override
                         public String call(Func1<T, String> f, T t) {
-                            return memoryUsage();
+                            return Logging.memoryUsage();
                         }
                     });
             Func1<Action1<T>, Action1<T>> action = identity();
@@ -246,20 +246,6 @@ public final class Log {
             this.action = action;
             this.message = messsage;
         }
-    }
-
-    private static String memoryUsage() {
-        StringBuilder s = new StringBuilder();
-        Runtime r = Runtime.getRuntime();
-        long mem = r.totalMemory() - r.freeMemory();
-        s.append("usedMem=");
-        s.append(new DecimalFormat("0").format(mem / 1000000.0));
-        s.append("MB, percentMax=");
-        s.append(new DecimalFormat("0.0").format((double) mem / r.maxMemory() * 100));
-        s.append(", max=");
-        s.append(new DecimalFormat("0").format(r.maxMemory() / 1000000.0));
-        s.append("MB");
-        return s.toString();
     }
 
     private static <T> Func1<Func1<T, String>, Func1<T, String>> chainMessage(

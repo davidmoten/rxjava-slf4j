@@ -537,47 +537,21 @@ public class Logging {
             }
 
             public Builder<T> start(final long start) {
-                transformations.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
-
-                    @Override
-                    public Observable<Message<T>> call(Observable<Message<T>> observable) {
-                        return observable.filter(new Func1<Message<T>, Boolean>() {
-                            AtomicLong count = new AtomicLong(0);
-
-                            @Override
-                            public Boolean call(Message<T> t) {
-                                if (t.value().isOnNext())
-                                    return start <= count.incrementAndGet();
-                                else
-                                    return true;
-                            }
-                        });
-                    }
-                });
+                transformations.add(observable -> Observable.defer(() -> {
+                    AtomicLong count = new AtomicLong(0);
+                    return observable.filter(t -> !t.value().isOnNext() || start <= count.incrementAndGet());
+                }));
                 return this;
             }
-
+            
             public Builder<T> finish(final long finish) {
-                transformations.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
-
-                    @Override
-                    public Observable<Message<T>> call(Observable<Message<T>> observable) {
-                        return observable.filter(new Func1<Message<T>, Boolean>() {
-                            AtomicLong count = new AtomicLong(0);
-
-                            @Override
-                            public Boolean call(Message<T> t) {
-                                if (t.value().isOnNext())
-                                    return finish >= count.incrementAndGet();
-                                else
-                                    return true;
-                            }
-                        });
-                    }
-                });
+                transformations.add(observable -> Observable.defer(() -> {
+                    AtomicLong count = new AtomicLong(0);
+                    return observable.filter(t -> !t.value().isOnNext() || finish >= count.incrementAndGet());
+                }));
                 return this;
             }
-
+            
             public Builder<T> to(
                     final Func1<Observable<? super Message<T>>, Observable<Message<T>>> f) {
                 transformations.add(new Func1<Observable<Message<T>>, Observable<Message<T>>>() {
@@ -674,7 +648,7 @@ public class Logging {
         }
     }
 
-    private static String memoryUsage() {
+    static String memoryUsage() {
         StringBuilder s = new StringBuilder();
         Runtime r = Runtime.getRuntime();
         long mem = r.totalMemory() - r.freeMemory();
