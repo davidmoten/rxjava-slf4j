@@ -35,7 +35,7 @@ Add this to your pom.xml:
 <dependency>
   <groupId>com.github.davidmoten</groupId>
   <artifactId>rxjava-slf4j</artifactId>
-  <version>0.6.7</version>
+  <version>VERSION_HERE</version>
 </dependency>
 ```
 
@@ -45,7 +45,7 @@ You will also need to add the slf4j library for your logging framework if you ar
 <dependency>
   <groupId>org.slf4j</groupId>
   <artifactId>slf4j-log4j12</artifactId>
-  <version>1.7.7</version>
+  <version>SLF4J_VERSION_HERE</version>
 </dependency>
 ```
 
