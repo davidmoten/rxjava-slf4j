@@ -33,7 +33,6 @@
         <jxr.version>3.0.0</jxr.version>
         <taglist.version>2.4</taglist.version>
         <m3.site.version>3.9.1</m3.site.version>
-        <changelog.version>2.2</changelog.version>
     </properties>
 
     <licenses>
@@ -249,11 +248,6 @@
                     <detectJavaApiLink>false</detectJavaApiLink>
                 </configuration>
             </plugin>
-            <!-- commented this plugin out because cannot run offline (e.g. 
-                at home) -->
-            <!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-changelog-plugin</artifactId> 
-                <version>${changelog.version}</version> <configuration> <username>${svn.username}</username> 
-                <password>${svn.password}</password> </configuration> </plugin> -->
         </plugins>
     </reporting>
 
