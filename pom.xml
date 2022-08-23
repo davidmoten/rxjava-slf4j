@@ -45,11 +45,6 @@
         </license>
     </licenses>
 
-    <ciManagement>
-        <system>CloudBees</system>
-        <url>https://xuml-tools.ci.cloudbees.com</url>
-    </ciManagement>
-
     <issueManagement>
         <system>GitHub</system>
         <url>https://github.com/davidmoten/rxjava-slf4j/issues</url>
@@ -136,6 +131,37 @@
                         <id>attach-descriptor</id>
                         <goals>
                             <goal>attach-descriptor</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.7.1.1</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
+                    <xmlOutput>true</xmlOutput>
+                    <excludeFilterFile>src/main/spotbugs/filter.xml</excludeFilterFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${pmd.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                            <goal>cpd-check</goal>
                         </goals>
                     </execution>
                 </executions>
