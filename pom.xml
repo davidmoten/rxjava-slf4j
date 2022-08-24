@@ -26,7 +26,7 @@
 
         <scm.url>scm:git:https://github.com/davidmoten/rxjava-slf4j.git</scm.url>
 
-        <javadoc.version>3.2.0</javadoc.version>
+        <javadoc.version>3.4.1</javadoc.version>
         <pmd.version>3.18.0</pmd.version>
         <jdepend.version>2.0-beta-2</jdepend.version>
         <project.info.version>3.1.1</project.info.version>
