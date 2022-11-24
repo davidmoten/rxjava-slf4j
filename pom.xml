@@ -80,7 +80,7 @@
         <dependency>
             <groupId>com.github.davidmoten</groupId>
             <artifactId>rxjava-extras</artifactId>
-            <version>0.8.0.19</version>
+            <version>0.8.0.20</version>
             <scope>test</scope>
         </dependency>
 
